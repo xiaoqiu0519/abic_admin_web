@@ -102,7 +102,7 @@
                             ? paymentsaleArr[tabledata[0][index].payment] 
                             : paymentleaseArr[tabledata[0][index].payment]}}
                     </td>
-                    <td>
+                    <td v-if="tabledata[0][index].furniture">
                         <span v-for="(list,index) in JSON.parse(tabledata[0][index].furniture)" :key="index">
                             {{furnitureArr[list]}}、
                         </span> 
@@ -179,10 +179,10 @@
                         <div class="inputDiv">
                             <span>用途:</span>
                             <div class="radioDiv">
-                                <input type="radio" v-model="housetype" value="1" :checked='housetype == 1' name="housetype">公寓
-                                <input type="radio" v-model="housetype" value="2" :checked='housetype == 2' name="housetype">旺铺
-                                <input type="radio" v-model="housetype" value="3" :checked='housetype == 3' name="housetype">办公室
-                                <input type="radio" v-model="housetype" value="4" :checked='housetype == 4' name="housetype">土地
+                                <input type="radio" v-model="used" value="1" :checked='used == 1' name="used">公寓
+                                <input type="radio" v-model="used" value="2" :checked='used == 2' name="used">旺铺
+                                <input type="radio" v-model="used" value="3" :checked='used == 3' name="used">办公室
+                                <input type="radio" v-model="used" value="4" :checked='used == 4' name="used">土地
                             </div>
                         </div>
                         <div class="inputDiv">
@@ -438,7 +438,7 @@ export default {
             },
             city:'',
             cityvalue:'',
-            housetype:'',
+            used:'',
             housetower:'',
             size:'',
             layout:'',
@@ -542,7 +542,7 @@ export default {
             };
             this.city='';
             this.cityvalue = '';
-            this.housetype='';
+            this.used='';
             this.housetower='';
             this.size='';
             this.layout='';
@@ -596,7 +596,7 @@ export default {
                 name_e:this.tabledata[1][index].title
             };
             this.city=this.tabledata[0][index].city;
-            this.housetype=this.tabledata[0][index].type;
+            this.used=this.tabledata[0][index].type;
             this.housetower=this.tabledata[0][index].tower;
             this.size=this.tabledata[0][index].size;
             this.layout=this.tabledata[0][index].layout;
@@ -618,7 +618,7 @@ export default {
         },
         addhouse(){
             if(!this.housename.name_c || !this.housename.name_e || !this.city || !this.cityvalue
-                || !this.housetype || !this.housetower || !this.size || !this.layout || !this.balcony || !this.parking
+                || !this.used || !this.housetower || !this.size || !this.layout || !this.balcony || !this.parking
                 || !this.sellingprice || !this.payment || !this.housenotes.notes_c || !this.housenotes.notes_e 
                 || !this.faceto || !this.houseintroduction.introduction_c || !this.houseintroduction.introduction_e){
                     this.$message('请填写完整内容');
@@ -633,7 +633,7 @@ export default {
                 title:JSON.stringify(this.housename),
                 city:this.city,
                 size:this.size,
-                type:this.housetype,
+                used:this.used,
                 tower:this.housetower,
                 layout:this.layout,
                 faceto:this.faceto,
@@ -643,7 +643,7 @@ export default {
                 payment:this.payment,
                 notes:JSON.stringify(this.housenotes),
                 furniture:JSON.stringify(this.furniture),
-                used:'1',
+                type:'1',
                 surrounding:JSON.stringify(this.surrounding),
                 imgArr:'图片',
                 introduction:JSON.stringify(this.houseintroduction)
