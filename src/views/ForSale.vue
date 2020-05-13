@@ -5,12 +5,6 @@
             <el-button type="primary" @click="clickadd()">添加房源</el-button>
         </div>
         <div class="search">
-            <!--
-            <div class='searchlist'>
-                <span>标题 : </span>
-                <el-input class="inputsearch" v-model="searchparams.title" placeholder="请输入楼盘名称"></el-input>
-            </div>
-            -->
             <div class="searchlist">
                 <span>城市 : </span>
                 <el-cascader class="inputsearch"
@@ -52,6 +46,17 @@
                     </el-option>
                 </el-select>
             </div>
+            <div class='searchlist'>
+                <span>价格 : </span>
+                <el-select class="inputsearch" v-model="dataprice" @change="choiceprice($event)" placeholder="请选择">
+                    <el-option
+                    v-for="item in housepriceselect"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                    </el-option>
+                </el-select>
+            </div>
             <div class='searchbtn'>
                 <el-button @click="clicksearchbtn()" type="primary" size="mini" icon="el-icon-search">搜索</el-button>
             </div>
@@ -78,7 +83,7 @@
                     <td width='7%'>操作</td>
                 </tr>
             </thead>
-            <tbody>
+            <tbody v-if="datalength && datalength.length !=0">
                 <tr v-for="(list,index) in datalength" :key="index">
                     <td>{{index+1}}</td>
                     <td>
@@ -137,9 +142,17 @@
         <div class="nodata" v-if="!datalength || datalength.length ==0">
             暂无数据
         </div>
+        <el-pagination style="margin-top:30px;text-align:right"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            background
+            :current-page.sync='currentpage'
+            layout="total,prev, pager, next"
+            :total="totalnum">
+        </el-pagination>
         <el-dialog title="编辑房源" 
             width="1100px"
-            :visible.sync="dialogFormVisible">
+            :visible="dialogFormVisible">
             <div class="dislogFormcon">
                 <div class="chinese">
                     <div class="dislogcon">
@@ -294,9 +307,7 @@
                         </div>
                         <div class="imgDiv">
                             <span>图片：</span>
-                            <div class="imgArr">
-                                <div v-for="(list,index) in 5" :key="index"></div>
-                            </div>
+                            <UpFile @senddata='getMsgForm' ref="ConFile"></UpFile>
                         </div>
                     </div>
                 </div>
@@ -318,9 +329,14 @@
     </div>
 </template>
 <script>
+import UpFile from '../components/upfile'
 export default {
     data(){
         return{
+            pageNum:1,
+            currentpage:1,
+            pageSize:10,
+            totalnum:10,
             loading:true,
             editid:'',
             datalength:'',
@@ -342,6 +358,32 @@ export default {
                 {
                     value:'1',
                     label:'已发布'
+                }
+            ],
+            housepriceselect:[
+                {
+                    value:'0',
+                    label:'不限'
+                },
+                {
+                    value:'1',
+                    label:'30000以下'
+                },
+                {
+                    value:'2',
+                    label:'30000-50000',
+                },
+                {
+                    value:'3',
+                    label:'50000-70000',
+                },
+                 {
+                    value:'4',
+                    label:'70000-100000',
+                },
+                 {
+                    value:'5',
+                    label:'100000以上',
                 }
             ],
             houseusedselect:[
@@ -389,7 +431,7 @@ export default {
                 2:'1BR',
                 3:'2BR',
                 4:'3BR',
-                5:'others'
+                5:'house'
             },
             facetoArr:{
                 1:'东',
@@ -463,8 +505,13 @@ export default {
             citytran:{
                 0:{},
                 1:{}
-            }
+            },
+            formData:'',
+            dataprice:''
         }
+    },
+    components:{
+        UpFile
     },
     mounted(){
         this.loadingflag(true)
@@ -472,11 +519,25 @@ export default {
         this.getcity();
     },
     methods:{
+        getMsgForm(data){
+            this.formData = data
+        },
+        handleSizeChange(val) {
+            this.pageNum = val;
+            this.gethouselist();
+        },
+        handleCurrentChange(val) {
+            this.pageNum = val;
+            this.gethouselist();
+        },
         clicksearchbtn(){
+            this.pageNum = 1;
+            this.currentpage = 1;
             this.gethouselist(this.searchparams)
         },
         handleChange(value) {
             this.searchparams.city = value[0] + "-" + value[1];
+            
         },
         handleChangecity(value){
             this.city=value[0] + '-' + value[1]
@@ -487,27 +548,64 @@ export default {
                     this.citylist = res.data[0]
                     for(var i=0 ; i <res.data[0].length ;i++){
                         for(var j=0 ;j <res.data[0][i].children.length;j++){
-                            this.citytran[0][res.data[0][i].value + '-' + res.data[0][i].children[j].value] = res.data[0][i].label + res.data[0][i].children[j].label
+                            this.citytran[0][res.data[0][i].value + '-' + res.data[0][i].children[j].value] = res.data[0][i].label + ' ' + res.data[0][i].children[j].label
                         }
                     }
                     for(var m=0 ; m <res.data[1].length ;m++){
                         for(var n=0 ;n <res.data[1][m].children.length;n++){
-                            this.citytran[1][res.data[1][m].value + '-' + res.data[1][m].children[n].value] = res.data[1][m].label + res.data[1][m].children[n].label
+                            this.citytran[1][res.data[1][m].value + '-' + res.data[1][m].children[n].value] = res.data[1][m].label + ' ' + res.data[1][m].children[n].label
                         }
                     }
                     this.selectcitylist = res.data[0].slice(1)
                 }
             })
         },
+        choiceprice(e){
+            switch(e){
+                case '0':
+                this.searchparams.price = {
+                    min:0,max:NaN
+                }
+                break;
+                case "1":
+                this.searchparams.price = {
+                    min:0,max:30000
+                }
+                break;
+                case "2":
+                this.searchparams.price = {
+                    min:30000,max:50000
+                }
+                break;
+                case "3":
+                this.searchparams.price = {
+                    min:50000,max:70000
+                }
+                break;
+                case "4":
+                this.searchparams.price = {
+                    min:70000,max:100000
+                }
+                break;
+                case "5":
+                this.searchparams.price = {
+                    min:100000,max:NaN
+                }
+                break;
+            }
+        },
         gethouselist(){
             this.loadingflag(true);  
             this.$post('/house/houselist',{
-                params:JSON.stringify(this.searchparams)
+                params:JSON.stringify(this.searchparams),
+                pageNum:this.pageNum,
+                pageSize:this.pageSize,
             }).then((res)=>{
                 this.loadingflag(false);
                 if(res.error == '0000'){
                     this.datalength = res.data[0].length;
-                    this.tabledata = res.data
+                    this.tabledata = res.data;
+                    this.totalnum = res.total;
                 }
             })
         },
@@ -561,6 +659,10 @@ export default {
                 introduction_c:'',
                 introduction_e:''
             }
+            this.formData = '';
+            setTimeout(()=>{
+                this.$refs.ConFile.clearImg()
+            })
         },
         clickbtn(){
             this.addhouse()
@@ -596,6 +698,7 @@ export default {
                 name_e:this.tabledata[1][index].title
             };
             this.city=this.tabledata[0][index].city;
+            this.cityvalue = this.city.split('-')
             this.used=this.tabledata[0][index].type;
             this.housetower=this.tabledata[0][index].tower;
             this.size=this.tabledata[0][index].size;
@@ -615,39 +718,47 @@ export default {
                 introduction_c:this.tabledata[0][index].introduction,
                 introduction_e:this.tabledata[1][index].introduction
             }
+            
+            this.formData = new FormData();
+            setTimeout(()=>{
+                this.$refs.ConFile.clearImg(this.tabledata[0][index].imgArr)
+            })
         },
         addhouse(){
             if(!this.housename.name_c || !this.housename.name_e || !this.city || !this.cityvalue
                 || !this.used || !this.housetower || !this.size || !this.layout || !this.balcony || !this.parking
-                || !this.sellingprice || !this.payment || !this.housenotes.notes_c || !this.housenotes.notes_e 
+                || !this.sellingprice || !this.payment || !this.housenotes.notes_c || !this.housenotes.notes_e || !this.formData
                 || !this.faceto || !this.houseintroduction.introduction_c || !this.houseintroduction.introduction_e){
                     this.$message('请填写完整内容');
                 return;
             }
             this.loadingflag(true);
-            this.$post('/house/addhouse',{
-                id:this.editid,
-                username:this.username.trim() ? this.username.trim() : 'admin',
-                telphone:this.telphone.trim() ? this.telphone.trim() : '00000000',
-                email:this.email.trim() ? this.email.trim() : '00000000',
-                title:JSON.stringify(this.housename),
-                city:this.city,
-                size:this.size,
-                used:this.used,
-                tower:this.housetower,
-                layout:this.layout,
-                faceto:this.faceto,
-                balcony:this.balcony,
-                parking:this.parking,
-                sellingprice:this.sellingprice,
-                payment:this.payment,
-                notes:JSON.stringify(this.housenotes),
-                furniture:JSON.stringify(this.furniture),
-                type:'1',
-                surrounding:JSON.stringify(this.surrounding),
-                imgArr:'图片',
-                introduction:JSON.stringify(this.houseintroduction)
-            }).then((res)=>{
+            this.formData.append('id',this.editid);
+            this.formData.append('username',this.username.trim() ? this.username.trim() : 'admin');
+            this.formData.append('telphone',this.telphone.trim() ? this.telphone.trim() : '00000000');
+            this.formData.append('email',this.email.trim() ? this.email.trim() : '00000000');
+            this.formData.append('title',JSON.stringify(this.housename));
+            this.formData.append('city',this.city);
+            this.cityname = {
+                cityname_c:this.citytran[0][this.city],
+                cityname_e:this.citytran[1][this.city]
+            }
+            this.formData.append('cityname',JSON.stringify(this.cityname));
+            this.formData.append('size',this.size);
+            this.formData.append('type',1);
+            this.formData.append('tower',this.housetower);
+            this.formData.append('layout',this.layout);
+            this.formData.append('faceto',this.faceto);
+            this.formData.append('balcony',this.balcony);
+            this.formData.append('parking',this.parking);
+            this.formData.append('sellingprice',this.sellingprice);
+            this.formData.append('payment',this.payment);
+            this.formData.append('notes',JSON.stringify(this.housenotes));
+            this.formData.append('furniture',JSON.stringify(this.furniture));
+            this.formData.append('used',this.used);
+            this.formData.append('introduction',JSON.stringify(this.houseintroduction));
+            this.formData.append('surrounding',JSON.stringify(this.surrounding));
+            this.$post('/house/addhouse',this.formData).then((res)=>{
                 this.loadingflag(false);
                 if(res.error == '0000'){
                     this.gethouselist();

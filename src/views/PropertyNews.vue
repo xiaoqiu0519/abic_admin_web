@@ -18,7 +18,6 @@
         :on-remove="handleRemove"
         :before-upload="beforeAvatarUpload"
         :with-credentials="true"
-        :auto-upload="false"
         :file-list="fileList"
         list-type="picture">
         <el-button size="small" type="primary">点击上传</el-button>
@@ -100,7 +99,7 @@
       upload(file) {
         console.log(file)
         let fd = new FormData();
-        fd.append('files', file.file)
+        fd.append('file', file.file)
         console.log(fd)
         var self = this;
         this.$post("/others/uploads",fd)

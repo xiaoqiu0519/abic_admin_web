@@ -59,7 +59,14 @@ export default {
                   padding 0 5%;
                   height 30px;
                   overflow hidden;
-                  border-top 1px solid #eeeeee;  
+                  border-top 1px solid #eeeeee;
+            .imgsArr
+                width 100%;
+                display flex;
+                align-items center;
+                justify-content space-around;
+                img 
+                    height 30px;         
   .dislogFormcon
       width 100%;
       display flex;

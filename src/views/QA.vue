@@ -34,6 +34,14 @@
         <div class="nodata" v-if="!tablelength || tablelength.length ==0">
             暂无数据
         </div>
+        <el-pagination style="margin-top:30px;text-align:right"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            background
+            :current-page.sync='currentpage'
+            layout="total,prev, pager, next"
+            :total="totalnum">
+        </el-pagination>
         <el-dialog title="修改问题" 
             v-loading="loading"
             :visible.sync="dialogFormVisible">
@@ -90,6 +98,10 @@
 export default {
     data(){
         return{
+            pageNum:1,
+            currentpage:1,
+            pageSize:10,
+            totalnum:10,
             dialogFormVisible:false,
             dialogVisible:false,
             editid:'',
@@ -106,11 +118,23 @@ export default {
         this.getlist()
     },
     methods:{
+        handleSizeChange(val) {
+            this.pageNum = val;
+            this.getlist();
+        },
+        handleCurrentChange(val) {
+            this.pageNum = val;
+            this.getlist();
+        },
         getlist(){
-            this.$get('/questent/getlist').then((res)=>{
+            this.$post('/questent/getlist',{
+                pageSize:this.pageSize,
+                pageNum:this.pageNum
+            }).then((res)=>{
                 if(res.error == '0000'){
                     this.loading = false;
                     this.tabledata = res.data;
+                    this.totalnum = res.total;
                     this.tablelength = res.data[0].length;
                 }
             })

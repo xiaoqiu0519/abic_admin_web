@@ -44,10 +44,10 @@
                     </el-submenu>
                     <el-submenu index="4">
                         <template slot="title">
-                            <span>吐槽管理</span>
+                            <span>避坑管理</span>
                         </template>
                         <el-menu-item-group>
-                            <el-menu-item index="4-1">吐槽小站</el-menu-item>
+                            <el-menu-item index="4-1">避坑管理</el-menu-item>
                         </el-menu-item-group>
                     </el-submenu>    
                 </el-menu>

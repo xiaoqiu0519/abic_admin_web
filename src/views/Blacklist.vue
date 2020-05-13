@@ -26,8 +26,10 @@
                         <p>{{tabledata[0][index].content}}</p>
                         <p>{{tabledata[1][index].content}}</p>
                     </td>
-                    <td>
-                        {{tabledata[0][index].status}}
+                    <td v-if="tabledata && tabledata.length != 0">
+                        <div class="imgsArr" >
+                            <img v-for="(item,index) in JSON.parse(tabledata[0][index].imgs)" :key="index" :src="item" alt="" srcset="">
+                        </div>
                     </td>
                     <td v-if="tabledata[0][index].status == 0">
                         <el-button size="mini" type="primary" @click="changestatus(index,1)">发布</el-button>
@@ -46,6 +48,14 @@
         <div class="nodata" v-if="!tablelength || tablelength.length ==0">
             暂无数据
         </div>
+        <el-pagination style="margin-top:30px;text-align:right"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            background
+            :current-page.sync='currentpage'
+            layout="total,prev, pager, next"
+            :total="totalnum">
+        </el-pagination>
         <el-dialog title="编辑" 
             v-loading="loading"
             :visible.sync="dialogFormVisible">
@@ -83,9 +93,7 @@
             </div>
             <div class="dialogFooter">
                 <span>图片：</span>
-                <div class="imgArr">
-                    <div class="imglist" v-for="(list,index) in 5" :key="index"></div>
-                </div>
+                <UpFile @senddata='getMsgForm' ref="ConFile"></UpFile>
             </div>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -105,9 +113,14 @@
     </div>
 </template>
 <script>
+import UpFile from '../components/upfile'
 export default {
     data(){
         return{
+            pageNum:1,
+            currentpage:1,
+            pageSize:10,
+            totalnum:10,
             editid:'',
             dialogFormVisible:false,
             dialogVisible:false,
@@ -118,17 +131,34 @@ export default {
             balck_title_e:'',
             black_content_c:'',
             black_content_e:'',
+            ddd:[],
+            formData:''
         }
+    },
+    components:{
+        UpFile
     },
     mounted(){
         this.getlist()
     },
     methods:{
+        handleSizeChange(val) {
+            this.pageNum = val;
+            this.getlist();
+        },
+        handleCurrentChange(val) {
+            this.pageNum = val;
+            this.getlist();
+        },
         getlist(){
-            this.$post('/black/getlist').then((res)=>{
+            this.$post('/black/getlist',{
+                pageSize:this.pageSize,
+                pageNum:this.pageNum
+            }).then((res)=>{
                 if(res.error == '0000'){
                     this.loading = false;
                     this.tabledata = res.data;
+                    this.totalnum = res.total;
                     this.tablelength = res.data[0].length;
                 }
             })
@@ -148,6 +178,9 @@ export default {
                 }
             })
         },
+        getMsgForm(data){
+            this.formData = data
+        },
         clickadd(){
             this.dialogFormVisible = true;
             this.editid = '';
@@ -155,6 +188,10 @@ export default {
             this.black_content_c = '';
             this.balck_title_e = '';
             this.black_content_e = '';
+            this.formData = '';
+            setTimeout(()=>{
+                this.$refs.ConFile.clearImg()
+            })
         },
         edit(index){
             this.editid = this.tabledata[0][index].id;
@@ -163,16 +200,19 @@ export default {
             this.black_content_c = this.tabledata[0][index].content;
             this.balck_title_e = this.tabledata[1][index].title;
             this.black_content_e = this.tabledata[1][index].content;
+            this.formData = new FormData();
+            setTimeout(()=>{
+                this.$refs.ConFile.clearImg(this.tabledata[0][index].imgs)
+            })
         },
         clickbtn(){
             this.loading = true;
-            this.$post('/black/updatecon',{
-                id:this.editid,
-                title_c:this.black_title_c,
-                content_c:this.black_content_c,
-                title_e:this.balck_title_e,
-                content_e:this.black_content_e
-            }).then((res)=>{
+            this.formData.append('id',this.editid);
+            this.formData.append('title_c',this.black_title_c);
+            this.formData.append('content_c',this.black_content_c);
+            this.formData.append('title_e',this.balck_title_e);
+            this.formData.append('content_e',this.black_content_e);
+            this.$post('/black/updatecon',this.formData).then((res)=>{
                 this.loading = false
                 if(res.error == '0000'){
                     this.dialogFormVisible = false;

@@ -15,12 +15,19 @@ module.exports = {
             proxy: {
                 '/api': {
                     target: 'http://localhost:3000/api', // 需要请求的地址
-                    changeOrigin: true, // 是否跨域
+                    changeOrigin: true,
                     pathRewrite: {
-                        '^/api': '/' // 替换target中的请求地址，也就是说，在请求的时候，url用'/proxy'代替'http://ip.taobao.com'
+                        '^/api': '/'
+                    }
+                },
+                '/public': {
+                    target: 'http://localhost:3000/public', // 需要请求的地址
+                    changeOrigin: true,
+                    pathRewrite: {
+                        '^/public': '/'
                     }
                 }
-            }, // 配置多个代理
+            },
         }
     },
 
