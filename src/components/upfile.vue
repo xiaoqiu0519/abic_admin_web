@@ -23,7 +23,7 @@ export default {
         this.formData = new FormData();
         this.upImgArr = [];
         let file = this.$refs.file
-        let size = 0;
+        //let size = 0;
         file.files.forEach((ele) => {
             this.formData.append('images', ele)
             this.upImgArr.push(URL.createObjectURL(ele))
