@@ -73,7 +73,7 @@
                     <td>面积</td>
                     <td>阳台</td>
                     <td>车位</td>
-                    <td>预期售价</td>
+                    <td>价格</td>
                     <td>付款方式</td>
                     <td width='10%'>家具</td>
                     <td width='8%'>备注</td>
@@ -100,7 +100,7 @@
                     <td>{{tabledata[0][index].size}}㎡</td>
                     <td>{{tabledata[0][index].balcony == 1 ? '有' : "无"}}</td>
                     <td>{{tabledata[0][index].parking == 1 ? '有' : "无"}}</td>
-                    <td>{{tabledata[0][index].sellingprice}}万披索</td>
+                    <td>{{tabledata[0][index].sellingprice}} Peso</td>
                     <td>
                         <!-- type:1 出售，type：2 租赁 -->
                         {{tabledata[0][index].type == 1 
@@ -437,7 +437,8 @@ export default {
                 1:'东',
                 2:'南',
                 3:'西',
-                4:'北'
+                4:'北',
+                5:'其它'
             },
             paymentleaseArr:{
                 1:'2+6',
@@ -548,12 +549,14 @@ export default {
                     this.citylist = res.data[0]
                     for(var i=0 ; i <res.data[0].length ;i++){
                         for(var j=0 ;j <res.data[0][i].children.length;j++){
-                            this.citytran[0][res.data[0][i].value + '-' + res.data[0][i].children[j].value] = res.data[0][i].label + ' ' + res.data[0][i].children[j].label
+                            this.citytran[0][res.data[0][i].value + '-' + res.data[0][i].children[j].value] = 
+                                res.data[0][i].label + ' ' + (res.data[0][i].children[j].label == '不限' ? '' : res.data[0][i].children[j].label)
                         }
                     }
                     for(var m=0 ; m <res.data[1].length ;m++){
                         for(var n=0 ;n <res.data[1][m].children.length;n++){
-                            this.citytran[1][res.data[1][m].value + '-' + res.data[1][m].children[n].value] = res.data[1][m].label + ' ' + res.data[1][m].children[n].label
+                            this.citytran[1][res.data[1][m].value + '-' + res.data[1][m].children[n].value] = 
+                                res.data[1][m].label + ' ' + (res.data[1][m].children[n].label == 'All' ? '' : res.data[1][m].children[n].label)
                         }
                     }
                     this.selectcitylist = res.data[0].slice(1)
