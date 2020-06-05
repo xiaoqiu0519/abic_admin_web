@@ -39,13 +39,13 @@ export default {
       align-items center;
       font-size 16px;
   .contable
-      width 1050px;
+      width 100%;
       border-collapse:collapse;
       font-size 12px;
       thead
           background #ecf5ff;
       tr
-          width 1050px; 
+          width 100%; 
           line-height 30px;
           td
               position relative;

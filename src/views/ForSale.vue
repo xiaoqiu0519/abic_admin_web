@@ -156,7 +156,7 @@
             :total="totalnum">
         </el-pagination>
         <el-dialog title="编辑房源" 
-            width="1100px"
+            width="90%"
             :visible="dialogFormVisible">
             <div class="dislogFormcon">
                 <div class="chinese">
@@ -851,7 +851,7 @@ export default {
         line-height 50px;
         background #409EFF;
         position absolute;
-        right 50px;
+        right 1%;
         top 25px;
         color white;
         border-radius 10px;
@@ -1002,9 +1002,8 @@ export default {
 <style lang="stylus">
 .flex
     button
-        margin-left 0 !important;
-        margin-bottom 5px;
-        margin-top 5px;
+        display block;
+        margin 5px auto !important;
 .ForSale
     .el-dialog__footer
         text-align center!important;   

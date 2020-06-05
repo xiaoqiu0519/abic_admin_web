@@ -36,7 +36,7 @@ export default {
     height 100px;
     background #ffa54f;
     .logan
-      width 1200px;
+      width 100%;
       margin 0 auto;
       height 100px;
       line-height 100px;
@@ -49,7 +49,7 @@ export default {
         font-size 20px; 
         margin-left 50px;
   .admin_con
-    width 1200px;
+    width 98%;
     margin 0 auto;
     display flex;
     justify-content space-between;
@@ -58,8 +58,9 @@ export default {
       height 100%;
       float left;
     .con
-      width 1050px;
+      width 98%;
       background white;  
       float left;
+      margin-left 2%;
       padding-bottom 50px;
 </style>
