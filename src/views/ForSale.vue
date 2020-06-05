@@ -1,5 +1,8 @@
 <template>
-    <div class="ForSale">  
+    <div class="ForSale">
+        <div class="mestip" @click="getnewmessage(1)" v-if="messagenum != 0">
+           <img src="../assets/message1.png" alt="" srcset=""> 您有 <span style="font-size:20px">{{messagenum}}</span> 条新的消息待处理
+        </div>  
         <div class="topadd">
             <span>房产管理</span>
             <el-button type="primary" @click="clickadd()">添加房源</el-button>
@@ -84,7 +87,7 @@
                 </tr>
             </thead>
             <tbody v-if="datalength && datalength.length !=0">
-                <tr v-for="(list,index) in datalength" :key="index">
+                <tr v-for="(list,index) in datalength"  :key="index">
                     <td>{{index+1}}</td>
                     <td>
                         <p>{{tabledata[0][index].title}}</p>
@@ -103,9 +106,7 @@
                     <td>{{tabledata[0][index].sellingprice}} Peso</td>
                     <td>
                         <!-- type:1 出售，type：2 租赁 -->
-                        {{tabledata[0][index].type == 1 
-                            ? paymentsaleArr[tabledata[0][index].payment] 
-                            : paymentleaseArr[tabledata[0][index].payment]}}
+                        {{ paymentleaseArr[tabledata[0][index].payment] }}
                     </td>
                     <td v-if="tabledata[0][index].furniture">
                         <span v-for="(list,index) in JSON.parse(tabledata[0][index].furniture)" :key="index">
@@ -125,12 +126,16 @@
                         <el-button size="mini" @click="updatehouse(index,2,'type')" :type="tabledata[0][index].type == 2 ? 'primary' : 'info'">租赁</el-button>
                         <el-button size="mini" @click="updatehouse(index,3,'type')" :type="tabledata[0][index].type == 3 ? 'primary' : 'info'">特价</el-button>
                     </td>
-                    <td v-if="tabledata[0][index].status == 0">
+                    <td class="flex" v-if="tabledata[0][index].status == 0">
                         <el-button size="mini" type="primary" @click="updatehouse(index,1,'status')">发布</el-button>
+                        <el-button size="mini" type="primary" @click="updatehouse(index,2,'status')">稍后</el-button>
                     </td>
                     <td class="flex" v-else-if="tabledata[0][index].status == 1">
                         <el-button size="mini" type="success" disabled>已发布</el-button>
                         <el-button size="mini" type="warning" @click="updatehouse(index,0,'status')">关闭</el-button>
+                    </td>
+                    <td class="flex" v-else-if="tabledata[0][index].status == 2">
+                        <el-button size="mini" type="warning" @click="updatehouse(index,0,'status')">打开</el-button>
                     </td>
                     <td class="flex">
                         <el-button size="mini" type="primary" @click="edit(index)">编辑</el-button>
@@ -250,6 +255,8 @@
                                 <input type="radio" v-model="payment" value="2" :checked='payment == 2' name="payment">2+6
                                 <input type="radio" v-model="payment" value="3" :checked='payment == 3' name="payment">2+12
                                 <input type="radio" v-model="payment" value="4" :checked='payment == 4' name="payment">others
+                                <input type="radio" v-model="payment" value="5" :checked='payment == 5' name="payment">cash
+                                <input type="radio" v-model="payment" value="6" :checked='payment == 6' name="payment">bank financing
                             </div>
                         </div>
                     </div>
@@ -333,6 +340,7 @@ import UpFile from '../components/upfile'
 export default {
     data(){
         return{
+            messagenum:0,
             pageNum:1,
             currentpage:1,
             pageSize:10,
@@ -358,6 +366,10 @@ export default {
                 {
                     value:'1',
                     label:'已发布'
+                },
+                {
+                    value:'2',
+                    label:'待处理'
                 }
             ],
             housepriceselect:[
@@ -444,7 +456,9 @@ export default {
                 1:'2+6',
                 2:'2+12',
                 3:'2+2+pdc',
-                4:'others'
+                4:'others',
+                5:'cash',
+                6:'bank financing'
             },
             paymentsaleArr:{
                 1:'cash',
@@ -518,8 +532,34 @@ export default {
         this.loadingflag(true)
         this.gethouselist();
         this.getcity();
+
+        this.getnewmessage(2)
+        setInterval(()=>{
+            this.getnewmessage(2)
+        },5000)
+        
     },
     methods:{
+        getnewmessage(type){
+            this.$post('/house/houselist',{
+                params:JSON.stringify({
+                    status:'0'
+                }),
+                pageNum:this.pageNum,
+                pageSize:this.pageSize,
+            }).then((res)=>{
+                if(res.error == '0000'){
+                    if(type == 2){
+                        this.messagenum = res.total;
+                    }else{
+                        this.datalength = res.data[0].length;
+                        this.tabledata = res.data;
+                        this.totalnum = res.total;
+                    }
+                   
+                }
+            })
+        },
         getMsgForm(data){
             this.formData = data
         },
@@ -613,9 +653,9 @@ export default {
             })
         },
         updatehouse(index,value,type){
-            if(!this.tabledata[0][index].title || !this.tabledata[1][index].title 
+            if((!this.tabledata[0][index].title || !this.tabledata[1][index].title 
                 || !this.tabledata[0][index].city || !this.tabledata[1][index].city
-                || !this.tabledata[0][index].notes || !this.tabledata[1][index].notes){
+                || !this.tabledata[0][index].notes || !this.tabledata[1][index].notes) && value == 1){
                     this.$message('请填写完整内容')
                     return;
                 }
@@ -777,10 +817,50 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
+@keyframes color{
+    0 {
+        opacity : 1;
+    }
+    50% {
+        opacity : 0.5;
+    }
+    100% {
+        opacity : 1;
+    }
+}
+
+@-webkit-keyframes color{
+    0 {
+        opacity : 1;
+    }
+    50% {
+        opacity : 0.5;
+    }
+    100% {
+        opacity : 1;
+    }
+}
 .ForSale
     width 100%;
     overflow-x auto;
     font-size 14px;
+    .mestip
+        cursor pointer
+        width 220px;
+        height 50px;
+        line-height 50px;
+        background #409EFF;
+        position absolute;
+        right 50px;
+        top 25px;
+        color white;
+        border-radius 10px;
+        text-align center;
+        animation color 1.5s linear infinite; 
+        img
+            width 25px;
+            position relative;
+            top 6px;
     .search
         margin 10px 0;
         display flex;
@@ -802,6 +882,9 @@ export default {
     font-size 12px;
     thead
         background #ecf5ff;
+    .wait
+        animation backgroundcolor 1.5s linear infinite; 
+        background : #C1FFE4 !important;    
     tr
         width 100%;
         overflow-x scroll;
