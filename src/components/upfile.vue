@@ -39,6 +39,7 @@ export default {
 <style lang="stylus" scoped>
 .imglist
     flex 1;
+    line-height 30px;
     .title
         width 100%;
         height 30px;

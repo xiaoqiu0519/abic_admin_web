@@ -204,7 +204,7 @@
                             </div>
                         </div>
                         <div class="inputDiv">
-                            <span>单元/门牌号:</span>
+                            <span>楼层:</span>
                             <input type="text" v-model="housetower" placeholder="请输入单元号/门牌号">
                         </div>
                         <div class="inputDiv">
@@ -224,6 +224,7 @@
                                 <input type="radio" v-model="faceto" value="2"  :checked='faceto == 2' name="faceto">南
                                 <input type="radio" v-model="faceto" value="3"  :checked='faceto == 3' name="faceto">西
                                 <input type="radio" v-model="faceto" value="4"  :checked='faceto == 4' name="faceto">北
+                                <input type="radio" v-model="faceto" value="5"  :checked='faceto == 5' name="faceto">其它
                             </div>
                         </div>
                         <div class="inputDiv">
@@ -245,7 +246,7 @@
                             </div>
                         </div>
                         <div class="inputDiv">
-                            <span>预售价格:</span>
+                            <span>价格:</span>
                             <input type="text" v-model="sellingprice" placeholder="请输入预售价格">
                         </div>
                         <div class="inputDiv">
@@ -453,9 +454,9 @@ export default {
                 5:'其它'
             },
             paymentleaseArr:{
-                1:'2+6',
-                2:'2+12',
-                3:'2+2+pdc',
+                1:'2+2+pdc',
+                2:'2+6',
+                3:'2+12',
                 4:'others',
                 5:'cash',
                 6:'bank financing'

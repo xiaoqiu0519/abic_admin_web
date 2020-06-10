@@ -2,7 +2,7 @@ import axios from 'axios'
 import store from '../store'
 const service = axios.create({
     baseURL: '/api', // api的base_url
-    timeout: 30000 // 请求超时时间
+    timeout: 60000 // 请求超时时间
 })
 
 // request拦截器
