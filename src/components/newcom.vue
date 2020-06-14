@@ -14,25 +14,33 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(list,index) in 9" :key="index">
+                    <tr v-for="(list,index) in listdata[0]" :key="index">
                         <td>{{index+1}}</td>
                         <td>
-                            <p class="noborder">撒旦发生</p>
-                            <p>打法师打</p>
+                            <p class="noborder">{{list.title}}</p>
+                            <p>{{listdata[1][index].title}}</p>
                         </td>
                         <td>
-                            <el-button size="mini" type="primary" @click="edit(index)">编辑</el-button>
+                            <el-button size="mini" type="primary" @click="godetail(index)">查看</el-button>
                             <el-button size="mini" type="danger" @click="deletebtn(index)">删除</el-button>
-                            <el-button size="mini" type="primary" @click="uodatestatus(index)">发布</el-button>
+                            <el-button size="mini" type="primary" v-if="list.status == 0" @click="uodatestatus(list,1)">发布</el-button>
+                            <el-button size="mini" type="warning" v-else @click="uodatestatus(list,0)">关闭</el-button>
                         </td>
                     </tr>
                 </tbody>
             </table>
-            <!--
-            <div class="nodata" v-if="!tablelength || tablelength.length ==0">
+           
+            <div class="nodata" v-if="!listdata[0] || listdata[0].length ==0">
                 暂无数据
             </div>
-            -->
+            <el-pagination style="margin-top:30px;text-align:right"
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                background
+                :current-page.sync='currentpage'
+                layout="total,prev, pager, next"
+                :total="totalnum">
+            </el-pagination>
         </div>
         <el-dialog 
             width="90%"
@@ -44,19 +52,19 @@
             <div class="diacontent">
                 <div class="title">
                     <span>标题 :</span>
-                    <el-input class="titlecon" v-model="title_c" placeholder="请输入内容"></el-input>
-                    <el-input class="titlecon" v-model="input_e" placeholder="请输入内容"></el-input>
+                    <el-input class="titlecon" v-model="titlecon.title_c" placeholder="请输入内容"></el-input>
+                    <el-input class="titlecon" v-model="titlecon.title_e" placeholder="请输入内容"></el-input>
                 </div>
                 <div v-for="(list,index) in content" :key="index">
                     <div class="list imglist" v-if="list.type == 2">
-                        <input class="filebtn" type="file">
+                        <input class="filebtn" type="file" @change="changeFile(index)" :ref="'file'+index" accept=".jpg, .jpeg, .png"/> 
                         <div class="addimgbtn">
                             <img src="../assets/tianjia.png" alt="" srcset="">
                             <br>
                             <span>选择图片</span>
                         </div>
                         <div class="imgArr" >
-                            <img src="../assets/下载 (1).jpg" alt="" srcset="">
+                            <img :src="list.img" alt="" srcset="">
                         </div>
                     </div>
                     <div class="list textlist" v-else>   
@@ -73,38 +81,77 @@
     </div>
 </template>
 <script>
-//import UpFile from '../components/upfile'
 export default {
     props:['title'],
     data(){
         return{
+            formData:new FormData(),
             loading:false,
-            dialogVisible:true,
-            title_c:'',
-            input_e:'',
-            content:[
-                
-            ]
+            pageNum:1,
+            currentpage:1,
+            pageSize:10,
+            totalnum:10,
+            dialogVisible:false,
+            titlecon:{
+                title_c:'',
+                title_e:'',
+            },
+            listdata:[],
+            content:[],
         }
     },
     components:{
         //UpFile
     },
+    mounted(){
+        this.getlist()
+    },
     methods:{
-        clickadd(){
-
+        getlist(){
+            this.$post('/advisory/list',this.formData).then((res)=>{
+                if(res.error == '0000'){
+                    this.listdata = res.data
+                    this.totalnum = res.total
+                }
+            })
         },
-        edit(){
+        clickadd(){
+            this.dialogVisible = true
+            this.formData = new FormData()
+        },
+        godetail(){
 
         },
         deletebtn(){
 
         },
-        uodatestatus(){
-
+        uodatestatus(list,status){
+            this.$post('/advisory/updatestatus',{
+                id:list.id,
+                status:status
+            }).then((res)=>{
+                if(res.error == '0000'){
+                    this.getlist();
+                }
+            })
+        },
+        handleSizeChange(val) {
+            this.pageNum = val;
+            this.getlist();
+        },
+        handleCurrentChange(val) {
+            this.pageNum = val;
+            this.getlist();
         },
         clicksure(){
-            console.log(this.content)
+            this.formData.append('title',JSON.stringify(this.titlecon))
+            this.formData.append('content',JSON.stringify(this.content))
+            this.$post('/advisory/addadvisory',this.formData).then((res)=>{
+                if(res.error == '0000'){
+                    this.dialogVisible = false
+                    this.getlist()
+                }
+            })
         },
         addcon(type){
             let numId = this.content.length + 1
@@ -126,7 +173,12 @@ export default {
                 var ele = document.getElementsByClassName('diacontent')[0];
                 ele.scrollTop = ele.scrollHeight;
             },10)
-        }
+        },
+        changeFile(index){
+            let file = this.$refs['file'+ index ][0]
+            this.content[index].img = URL.createObjectURL(file.files[0])
+            this.formData.append('images'+ this.content[index].num ,file.files[0] )
+        },
 
     }
 }
