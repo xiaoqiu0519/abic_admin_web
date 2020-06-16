@@ -198,8 +198,8 @@
                             <span>用途:</span>
                             <div class="radioDiv">
                                 <input type="radio" v-model="used" value="1" :checked='used == 1' name="used">公寓
-                                <input type="radio" v-model="used" value="2" :checked='used == 2' name="used">旺铺
-                                <input type="radio" v-model="used" value="3" :checked='used == 3' name="used">办公室
+                                <input type="radio" v-model="used" value="2" :checked='used == 2' name="used">办公室
+                                <input type="radio" v-model="used" value="3" :checked='used == 3' name="used">旺铺
                                 <input type="radio" v-model="used" value="4" :checked='used == 4' name="used">土地
                             </div>
                         </div>
@@ -272,19 +272,19 @@
                                 <input type="checkbox" v-model="furniture" value="3" name="furniture">冰箱
                                 <input type="checkbox" v-model="furniture" value="4" name="furniture">电视机
                                 <input type="checkbox" v-model="furniture" value="5" name="furniture">桌椅
-                                <input type="checkbox" v-model="furniture" value="6" name="furniture">沙发
-                                <input type="checkbox" v-model="furniture" value="7" name="furniture">茶几
+                                <input type="checkbox" v-model="furniture" value="6" name="furniture">沙发                              
                                 <input type="checkbox" v-model="furniture" value="8" name="furniture">床
                                 <input type="checkbox" v-model="furniture" value="9" name="furniture">空调
+                                <input type="checkbox" v-model="furniture" value="7" name="furniture">无
                             </div>
                         </div>
                         <div class="inputDiv">
-                            <span>周边:</span>
+                            <span>公寓设施:</span>
                             <div class="radioDiv">
-                                <input type="checkbox" v-model="surrounding" value="1"  name="surrounding">学校
-                                <input type="checkbox" v-model="surrounding" value="2" name="surrounding">生活超市
-                                <input type="checkbox" v-model="surrounding" value="3" name="surrounding">健身房
-                                <input type="checkbox" v-model="surrounding" value="4" name="surrounding">公园
+                                <input type="checkbox" v-model="surrounding" value="1"  name="surrounding">健身房
+                                <input type="checkbox" v-model="surrounding" value="2" name="surrounding">游泳池
+                                <input type="checkbox" v-model="surrounding" value="3" name="surrounding">篮球场
+                                <input type="checkbox" v-model="surrounding" value="4" name="surrounding">儿童乐园
                             </div>
                         </div>
                         <div class="textareaDiv">
@@ -341,6 +341,7 @@ import UpFile from '../components/upfile'
 export default {
     data(){
         return{
+            timer:'',
             messagenum:0,
             pageNum:1,
             currentpage:1,
@@ -473,9 +474,9 @@ export default {
                 4:'电视机',
                 5:'桌椅',
                 6:'沙发',
-                7:'茶几',
+                7:'无',
                 8:'床',
-                9:'空调'
+                9:'空调',
             },
             searchparams:{
                 title:'',
@@ -535,10 +536,13 @@ export default {
         this.getcity();
 
         this.getnewmessage(2)
-        setInterval(()=>{
+        this.timer = setInterval(()=>{
             this.getnewmessage(2)
         },5000)
         
+    },
+    beforeDestroy(){
+        clearInterval(this.timer)
     },
     methods:{
         getnewmessage(type){

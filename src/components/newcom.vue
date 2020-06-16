@@ -9,7 +9,7 @@
                 <thead>
                     <tr style="height:30px">
                         <td width='10%'>序号</td>
-                        <td width='60%'>答案</td>
+                        <td width='60%'>标题</td>
                         <td width='30%'>操作</td>
                     </tr>
                 </thead>
@@ -22,7 +22,7 @@
                         </td>
                         <td>
                             <el-button size="mini" type="primary" @click="godetail(index)">查看</el-button>
-                            <el-button size="mini" type="danger" @click="deletebtn(index)">删除</el-button>
+                            <el-button size="mini" type="danger" @click="deletesure(list)">删除</el-button>
                             <el-button size="mini" type="primary" v-if="list.status == 0" @click="uodatestatus(list,1)">发布</el-button>
                             <el-button size="mini" type="warning" v-else @click="uodatestatus(list,0)">关闭</el-button>
                         </td>
@@ -43,6 +43,7 @@
             </el-pagination>
         </div>
         <el-dialog 
+            class="dddd"
             width="90%"
             :visible="dialogVisible">
             <div class="addbtn"> 
@@ -78,9 +79,20 @@
                 <el-button type="primary" @click="clicksure()">确 定</el-button>
             </span>
         </el-dialog>
+        <el-dialog
+            title="确认删除？"
+            :visible.sync="dialogVisiblesure" width="30%">
+            <span>确定删除此条内容么？</span>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisiblesure = false">取 消</el-button>
+                <el-button type="primary" @click="deletebtn()">确 定</el-button>
+            </span>
+        </el-dialog>
+        <newdetail :detaillist="detaillist" @closedetail='closedetail' v-if="showdetail"></newdetail>
     </div>
 </template>
 <script>
+import newdetail from './newdetail'
 export default {
     props:['title'],
     data(){
@@ -91,6 +103,7 @@ export default {
             currentpage:1,
             pageSize:10,
             totalnum:10,
+            dialogVisiblesure:false,
             dialogVisible:false,
             titlecon:{
                 title_c:'',
@@ -98,34 +111,64 @@ export default {
             },
             listdata:[],
             content:[],
+            showdetail:false,
+            detaillist:''
+
         }
     },
     components:{
-        //UpFile
+        newdetail
     },
     mounted(){
+        this.loadingflag(true)
         this.getlist()
     },
     methods:{
         getlist(){
             this.$post('/advisory/list',this.formData).then((res)=>{
+                this.loadingflag(false)
                 if(res.error == '0000'){
                     this.listdata = res.data
                     this.totalnum = res.total
                 }
             })
         },
+        closedetail(){
+            this.showdetail = false;
+        },
         clickadd(){
             this.dialogVisible = true
+            this.content = []
+            this.titlecon = {
+                title_c:'',
+                title_e:''
+            }
             this.formData = new FormData()
         },
-        godetail(){
-
+        godetail(index){
+            this.detaillist = {
+                ch:this.listdata[0][index].content,
+                en:this.listdata[1][index].content
+            }
+            this.showdetail = true
+        },
+        deletesure(list){
+            this.deleteid = list.id
+            this.dialogVisiblesure = true
         },
         deletebtn(){
-
+            this.loadingflag(true)
+            this.$post('/advisory/deleteadvisory',{
+                id:this.deleteid,
+            }).then((res)=>{
+                if(res.error == '0000'){
+                    this.dialogVisiblesure = false
+                    this.getlist();
+                }
+            })
         },
         uodatestatus(list,status){
+            this.loadingflag(true)
             this.$post('/advisory/updatestatus',{
                 id:list.id,
                 status:status
@@ -146,6 +189,7 @@ export default {
         clicksure(){
             this.formData.append('title',JSON.stringify(this.titlecon))
             this.formData.append('content',JSON.stringify(this.content))
+            this.loadingflag(true)
             this.$post('/advisory/addadvisory',this.formData).then((res)=>{
                 if(res.error == '0000'){
                     this.dialogVisible = false
@@ -154,17 +198,17 @@ export default {
             })
         },
         addcon(type){
-            let numId = this.content.length + 1
+            let length = this.content.length
             if(type == 1){
                 this.content.push({
-                    num:numId,
+                    num:length + 1,
                     type:1,
                     con_c:'',
                     con_e:''
                 })
             }else{
                 this.content.push({
-                    num:numId,
+                    num:length + 1,
                     type:2,
                     img:''
                 })
@@ -221,7 +265,6 @@ export default {
                 width 30%;
                 margin-right 30px;
             }
-               
         }
         .list{
             margin-top 20px !important;
@@ -273,12 +316,15 @@ export default {
 </style>
 <style lang="stylus">
 .newcon{
-    .el-dialog__body{
-       height: 400px;
-    } 
-    .el-dialog{
-        margin-top 5vh !important 
+    .dddd{
+        .el-dialog__body{
+            height: 400px;
+        } 
+        .el-dialog{
+            margin-top 5vh !important 
+        }
     }
+    
 }
    
 </style>
