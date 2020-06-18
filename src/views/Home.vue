@@ -54,7 +54,7 @@ export default {
     display flex;
     justify-content space-between;
     .nav
-      width 140px;
+      width 160px;
       height 100%;
       float left;
     .con

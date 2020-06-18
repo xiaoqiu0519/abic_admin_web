@@ -1,6 +1,6 @@
 <template>
   <div>
-    <newcom title="房产资讯"></newcom>
+    <newcom title="Property" newtype='1'></newcom>
   </div>
 </template>
 

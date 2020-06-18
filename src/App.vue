@@ -90,7 +90,7 @@ export default {
                       resize:none;
                       outline none;
                   span
-                    width 50px;    
+                    width 80px;    
               .A
                   height 100px;        
   .el-dialog__body

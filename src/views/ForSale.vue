@@ -1,15 +1,15 @@
 <template>
     <div class="ForSale">
         <div class="mestip" @click="getnewmessage(1)" v-if="messagenum != 0">
-           <img src="../assets/message1.png" alt="" srcset=""> 您有 <span style="font-size:20px">{{messagenum}}</span> 条新的消息待处理
+           <img src="../assets/message1.png" alt="" srcset=""><span style="font-size:20px;margin-left:6px">{{messagenum}} New Message</span> 
         </div>  
         <div class="topadd">
-            <span>房产管理</span>
-            <el-button type="primary" @click="clickadd()">添加房源</el-button>
+            <span>Realty Manage</span>
+            <el-button type="primary" @click="clickadd()">Add Realty</el-button>
         </div>
         <div class="search">
             <div class="searchlist">
-                <span>城市 : </span>
+                <span>City : </span>
                 <el-cascader class="inputsearch"
                     :options="citylist"
                     v-model="selectedOptions"
@@ -17,8 +17,8 @@
                 </el-cascader>
             </div>
             <div class='searchlist'>
-                <span>类型 : </span>
-                <el-select class="inputsearch" v-model="searchparams.type" placeholder="请选择">
+                <span>Type : </span>
+                <el-select class="inputsearch" v-model="searchparams.type" placeholder="Please choose">
                     <el-option
                     v-for="item in housetypeselect"
                     :key="item.value"
@@ -28,8 +28,8 @@
                 </el-select>
             </div>
             <div class='searchlist'>
-                <span>用途 : </span>
-                <el-select class="inputsearch" v-model="searchparams.used" placeholder="请选择">
+                <span>Used : </span>
+                <el-select class="inputsearch" v-model="searchparams.used" placeholder="Please choose">
                     <el-option
                     v-for="item in houseusedselect"
                     :key="item.value"
@@ -39,8 +39,8 @@
                 </el-select>
             </div>
             <div class='searchlist'>
-                <span>状态 : </span>
-                <el-select class="inputsearch" v-model="searchparams.status" placeholder="请选择">
+                <span>Status : </span>
+                <el-select class="inputsearch" v-model="searchparams.status" placeholder="Please choose">
                     <el-option
                     v-for="item in housestatusselect"
                     :key="item.value"
@@ -50,8 +50,8 @@
                 </el-select>
             </div>
             <div class='searchlist'>
-                <span>价格 : </span>
-                <el-select class="inputsearch" v-model="dataprice" @change="choiceprice($event)" placeholder="请选择">
+                <span>Price : </span>
+                <el-select class="inputsearch" v-model="dataprice" @change="choiceprice($event)" placeholder="Please choose">
                     <el-option
                     v-for="item in housepriceselect"
                     :key="item.value"
@@ -61,29 +61,30 @@
                 </el-select>
             </div>
             <div class='searchbtn'>
-                <el-button @click="clicksearchbtn()" type="primary" size="mini" icon="el-icon-search">搜索</el-button>
+                <el-button @click="clicksearchbtn()" type="primary" size="mini" icon="el-icon-search">Search</el-button>
             </div>
         </div>
         <table class="ForSaletable">
             <thead>
                 <tr style="height:30px">
-                    <td>序号</td>
-                    <td width='10%'>楼盘名称</td>
-                    <td width='10%'>楼盘位置</td>
-                    <td>用途</td>
-                    <td width='5%'>单元号&门牌号</td>
-                    <td>户型/朝向</td>
-                    <td>面积</td>
-                    <td>阳台</td>
-                    <td>车位</td>
-                    <td>价格</td>
-                    <td>付款方式</td>
-                    <td width='10%'>家具</td>
-                    <td width='8%'>备注</td>
-                    <td width='10%'>房源介绍</td>
-                    <td width='7%'>类型</td>
-                    <td width='7%'>状态</td>
-                    <td width='7%'>操作</td>
+                    <td>Sort</td>
+                    <td width='10%'>Name</td>
+                    <td width='10%'>City</td>
+                    <td>Used</td>
+                    <td width='5%'>Contact No.</td>
+                    <td>Face to</td>
+                    <td>Size</td>
+                    <td>Balcony</td>
+                    <td>Parking</td>
+                    <td>Price</td>
+                    <td>Payment</td>
+                    <td width='10%'>Furniture</td>
+                    <td width='8%'>Notes</td>
+                    <td width='10%'>Introduction</td>
+                    <td width='7%'>Type</td>
+                    <td width='7%'>Status</td>
+                    <td>New</td>
+                    <td width='7%'>operate</td>
                 </tr>
             </thead>
             <tbody v-if="datalength && datalength.length !=0">
@@ -101,8 +102,8 @@
                     <td><p>{{tabledata[0][index].tower}}</p></td>
                     <td><p>{{layoutArr[tabledata[0][index].layout]}}/{{facetoArr[tabledata[0][index].faceto]}}</p></td>
                     <td>{{tabledata[0][index].size}}㎡</td>
-                    <td>{{tabledata[0][index].balcony == 1 ? '有' : "无"}}</td>
-                    <td>{{tabledata[0][index].parking == 1 ? '有' : "无"}}</td>
+                    <td>{{tabledata[0][index].balcony == 1 ? 'Y' : "N"}}</td>
+                    <td>{{tabledata[0][index].parking == 1 ? 'Y' : "N"}}</td>
                     <td>{{tabledata[0][index].sellingprice}} Peso</td>
                     <td>
                         <!-- type:1 出售，type：2 租赁 -->
@@ -122,30 +123,33 @@
                         <p>{{tabledata[1][index].introduction}}</p>
                     </td>
                     <td class="flex">
-                        <el-button size="mini" @click="updatehouse(index,1,'type')" :type="tabledata[0][index].type == 1 ? 'primary' : 'info'">出售</el-button>
-                        <el-button size="mini" @click="updatehouse(index,2,'type')" :type="tabledata[0][index].type == 2 ? 'primary' : 'info'">租赁</el-button>
-                        <el-button size="mini" @click="updatehouse(index,3,'type')" :type="tabledata[0][index].type == 3 ? 'primary' : 'info'">特价</el-button>
+                        <el-button size="mini" @click="updatehouse(index,1,'type')" :type="tabledata[0][index].type == 1 ? 'primary' : 'info'">For Sale</el-button>
+                        <el-button size="mini" @click="updatehouse(index,2,'type')" :type="tabledata[0][index].type == 2 ? 'primary' : 'info'">For Lease</el-button>
+                        <el-button size="mini" @click="updatehouse(index,3,'type')" :type="tabledata[0][index].type == 3 ? 'primary' : 'info'">Rush Sale</el-button>
                     </td>
                     <td class="flex" v-if="tabledata[0][index].status == 0">
-                        <el-button size="mini" type="primary" @click="updatehouse(index,1,'status')">发布</el-button>
-                        <el-button size="mini" type="primary" @click="updatehouse(index,2,'status')">稍后</el-button>
+                        <el-button size="mini" type="primary" @click="updatehouse(index,1,'status')">Release</el-button>
+                        <el-button size="mini" type="primary" @click="updatehouse(index,2,'status')">Later</el-button>
                     </td>
                     <td class="flex" v-else-if="tabledata[0][index].status == 1">
-                        <el-button size="mini" type="success" disabled>已发布</el-button>
-                        <el-button size="mini" type="warning" @click="updatehouse(index,0,'status')">关闭</el-button>
+                        <el-button size="mini" type="success" disabled>Published</el-button>
+                        <el-button size="mini" type="warning" @click="updatehouse(index,0,'status')">Closed</el-button>
                     </td>
                     <td class="flex" v-else-if="tabledata[0][index].status == 2">
-                        <el-button size="mini" type="warning" @click="updatehouse(index,0,'status')">打开</el-button>
+                        <el-button size="mini" type="warning" @click="updatehouse(index,0,'status')">Open</el-button>
+                    </td>
+                    <td>
+                        <el-switch @change="updatenewhouse(index)" v-model="tabledata[0][index].isnew" active-color="#409EFF" inactive-color="#909399" active-value="1" inactive-value="0"></el-switch>
                     </td>
                     <td class="flex">
-                        <el-button size="mini" type="primary" @click="edit(index)">编辑</el-button>
-                        <el-button size="mini" type="danger" @click='deletefun(index)'>删除</el-button>
+                        <el-button size="mini" type="primary" @click="edit(index)">Edit</el-button>
+                        <el-button size="mini" type="danger" @click='deletefun(index)'>Delete</el-button>
                     </td>
                 </tr>
             </tbody>
         </table>
         <div class="nodata" v-if="!datalength || datalength.length ==0">
-            暂无数据
+            No Data
         </div>
         <el-pagination style="margin-top:30px;text-align:right"
             @size-change="handleSizeChange"
@@ -155,39 +159,39 @@
             layout="total,prev, pager, next"
             :total="totalnum">
         </el-pagination>
-        <el-dialog title="编辑房源" 
+        <el-dialog title="Edit Realty" 
             width="90%"
             :visible="dialogFormVisible">
             <div class="dislogFormcon">
                 <div class="chinese">
                     <div class="dislogcon">
                         <div class="inputDiv">
-                            <span>客户姓名:</span>
+                            <span>User Name:</span>
                             <input type="text" v-model="username">
                         </div>
                         <div class="inputDiv">
-                            <span>客户手机号:</span>
+                            <span>User Number:</span>
                             <input type="text" v-model="telphone">
                         </div>
                         <div class="inputDiv">
-                            <span>客户邮箱:</span>
+                            <span>User Email:</span>
                             <input type="text" v-model="email">
                         </div>
                         <div class="cominput">
-                            <span>楼盘名称:</span>
+                            <span>Name:</span>
                             <div class="inputArr">
                                 <p>
-                                    <span>中:</span>
+                                    <span>Ch:</span>
                                     <input type="text" v-model="housename.name_c" placeholder="请输入楼盘名称(描述title)">
                                 </p>
                                 <p>
-                                    <span>英:</span>
-                                    <input type="text" v-model="housename.name_e" placeholder="请输入楼盘名称(描述title)">
+                                    <span>En:</span>
+                                    <input type="text" v-model="housename.name_e" placeholder="Please enter the property name (description title)">
                                 </p>
                             </div>
                         </div>
                         <div class="cominput">
-                            <span>城市:</span>
+                            <span>City:</span>
                             <el-cascader class="inputsearch" 
                                 :options="selectcitylist"
                                 v-model="cityvalue"
@@ -195,69 +199,69 @@
                             </el-cascader>
                         </div>
                         <div class="inputDiv">
-                            <span>用途:</span>
+                            <span>Used:</span>
                             <div class="radioDiv">
-                                <input type="radio" v-model="used" value="1" :checked='used == 1' name="used">公寓
-                                <input type="radio" v-model="used" value="2" :checked='used == 2' name="used">办公室
-                                <input type="radio" v-model="used" value="3" :checked='used == 3' name="used">旺铺
-                                <input type="radio" v-model="used" value="4" :checked='used == 4' name="used">土地
+                                <input type="radio" v-model="used" value="1" :checked='used == 1' name="used"> Condo
+                                <input type="radio" v-model="used" value="2" :checked='used == 2' name="used"> Office
+                                <input type="radio" v-model="used" value="3" :checked='used == 3' name="used"> Commercial Space
+                                <input type="radio" v-model="used" value="4" :checked='used == 4' name="used"> land
                             </div>
                         </div>
                         <div class="inputDiv">
-                            <span>楼层:</span>
-                            <input type="text" v-model="housetower" placeholder="请输入单元号/门牌号">
+                            <span>Floor:</span>
+                            <input type="text" v-model="housetower" placeholder="please enter Contact No.">
                         </div>
                         <div class="inputDiv">
-                            <span>户型:</span>
+                            <span>Layout:</span>
                             <div class="radioDiv">
-                                <input type="radio" v-model="layout" value="1"  :checked='layout == 1' name="layout">studio
-                                <input type="radio" v-model="layout" value="2"  :checked='layout == 2' name="layout">1BR
-                                <input type="radio" v-model="layout" value="3"  :checked='layout == 3' name="layout">2BR
-                                <input type="radio" v-model="layout" value="4"  :checked='layout == 4' name="layout">3BR
-                                <input type="radio" v-model="layout" value="5"  :checked='layout == 5' name="layout">others
+                                <input type="radio" v-model="layout" value="1"  :checked='layout == 1' name="layout"> studio
+                                <input type="radio" v-model="layout" value="2"  :checked='layout == 2' name="layout"> 1BR
+                                <input type="radio" v-model="layout" value="3"  :checked='layout == 3' name="layout"> 2BR
+                                <input type="radio" v-model="layout" value="4"  :checked='layout == 4' name="layout"> 3BR
+                                <input type="radio" v-model="layout" value="5"  :checked='layout == 5' name="layout"> others
                             </div>
                         </div>
                         <div class="inputDiv">
-                            <span>朝向:</span>
+                            <span>FaceTo:</span>
                             <div class="radioDiv">
-                                <input type="radio" v-model="faceto" value="1"  :checked='faceto == 1' name="faceto">东
-                                <input type="radio" v-model="faceto" value="2"  :checked='faceto == 2' name="faceto">南
-                                <input type="radio" v-model="faceto" value="3"  :checked='faceto == 3' name="faceto">西
-                                <input type="radio" v-model="faceto" value="4"  :checked='faceto == 4' name="faceto">北
-                                <input type="radio" v-model="faceto" value="5"  :checked='faceto == 5' name="faceto">其它
+                                <input type="radio" v-model="faceto" value="1"  :checked='faceto == 1' name="faceto"> East
+                                <input type="radio" v-model="faceto" value="2"  :checked='faceto == 2' name="faceto"> South
+                                <input type="radio" v-model="faceto" value="3"  :checked='faceto == 3' name="faceto"> West
+                                <input type="radio" v-model="faceto" value="4"  :checked='faceto == 4' name="faceto"> North
+                                <input type="radio" v-model="faceto" value="5"  :checked='faceto == 5' name="faceto"> Others
                             </div>
                         </div>
                         <div class="inputDiv">
-                            <span>面积:</span>
-                            <input type="text" v-model="size" placeholder="请输入房屋面积大小">
+                            <span>Size:</span>
+                            <input type="text" v-model="size" placeholder="please enter Size">
                         </div>
                         <div class="inputDiv">
-                            <span>阳台:</span>
+                            <span>Balcony:</span>
                             <div class="radioDiv">
-                                <input type="radio" v-model="balcony" value="1"  :checked='balcony == 1' name="balcony">有
-                                <input type="radio" v-model="balcony" value="2" :checked='balcony == 2' name="balcony">无
+                                <input type="radio" v-model="balcony" value="1"  :checked='balcony == 1' name="balcony"> Y
+                                <input type="radio" v-model="balcony" value="2" :checked='balcony == 2' name="balcony"> N
                             </div>
                         </div>
                         <div class="inputDiv">
-                            <span>车位:</span>
+                            <span>Parking:</span>
                             <div class="radioDiv">
-                                <input type="radio" v-model="parking" value="1" :checked='parking == 1' name="parking">有
-                                <input type="radio" v-model="parking" value="2" :checked='parking == 2' name="parking">无
+                                <input type="radio" v-model="parking" value="1" :checked='parking == 1' name="parking"> Y
+                                <input type="radio" v-model="parking" value="2" :checked='parking == 2' name="parking"> N
                             </div>
                         </div>
                         <div class="inputDiv">
-                            <span>价格:</span>
-                            <input type="text" v-model="sellingprice" placeholder="请输入预售价格">
+                            <span>Price:</span>
+                            <input type="text" v-model="sellingprice" placeholder="please enter price">
                         </div>
                         <div class="inputDiv">
-                            <span>付款方式:</span>
+                            <span>Payment:</span>
                             <div class="radioDiv">
-                                <input type="radio" v-model="payment" value="1" :checked='payment == 1' name="payment">2+2+pdc
-                                <input type="radio" v-model="payment" value="2" :checked='payment == 2' name="payment">2+6
-                                <input type="radio" v-model="payment" value="3" :checked='payment == 3' name="payment">2+12
-                                <input type="radio" v-model="payment" value="4" :checked='payment == 4' name="payment">others
-                                <input type="radio" v-model="payment" value="5" :checked='payment == 5' name="payment">cash
-                                <input type="radio" v-model="payment" value="6" :checked='payment == 6' name="payment">bank financing
+                                <input type="radio" v-model="payment" value="1" :checked='payment == 1' name="payment"> 2+2+pdc
+                                <input type="radio" v-model="payment" value="2" :checked='payment == 2' name="payment"> 2+6
+                                <input type="radio" v-model="payment" value="3" :checked='payment == 3' name="payment"> 2+12
+                                <input type="radio" v-model="payment" value="4" :checked='payment == 4' name="payment"> others
+                                <input type="radio" v-model="payment" value="5" :checked='payment == 5' name="payment"> cash
+                                <input type="radio" v-model="payment" value="6" :checked='payment == 6' name="payment"> bank financing
                             </div>
                         </div>
                     </div>
@@ -265,73 +269,73 @@
                 <div class="english">
                     <div class="dislogcon">
                         <div class="inputDiv">
-                            <span>家具:</span>
+                            <span>Furniture:</span>
                             <div class="radioDiv">
-                                <input type="checkbox" v-model="furniture" value="1" name="furniture">洗衣机
-                                <input type="checkbox" v-model="furniture" value="2" name="furniture">热水器
-                                <input type="checkbox" v-model="furniture" value="3" name="furniture">冰箱
-                                <input type="checkbox" v-model="furniture" value="4" name="furniture">电视机
-                                <input type="checkbox" v-model="furniture" value="5" name="furniture">桌椅
-                                <input type="checkbox" v-model="furniture" value="6" name="furniture">沙发                              
-                                <input type="checkbox" v-model="furniture" value="8" name="furniture">床
-                                <input type="checkbox" v-model="furniture" value="9" name="furniture">空调
-                                <input type="checkbox" v-model="furniture" value="7" name="furniture">无
+                                <input type="checkbox" v-model="furniture" value="1" name="furniture">Washing Machine
+                                <input type="checkbox" v-model="furniture" value="2" name="furniture">Water Heater
+                                <input type="checkbox" v-model="furniture" value="3" name="furniture">Refrigerator
+                                <input type="checkbox" v-model="furniture" value="4" name="furniture">TV
+                                <input type="checkbox" v-model="furniture" value="5" name="furniture">Table&Chair
+                                <input type="checkbox" v-model="furniture" value="6" name="furniture">Sofa                              
+                                <input type="checkbox" v-model="furniture" value="7" name="furniture">Bed
+                                <input type="checkbox" v-model="furniture" value="8" name="furniture">Aircon
+                                <input type="checkbox" v-model="furniture" value="9" name="furniture">None
                             </div>
                         </div>
                         <div class="inputDiv">
-                            <span>公寓设施:</span>
+                            <span>Surrounding:</span>
                             <div class="radioDiv">
-                                <input type="checkbox" v-model="surrounding" value="1"  name="surrounding">健身房
-                                <input type="checkbox" v-model="surrounding" value="2" name="surrounding">游泳池
-                                <input type="checkbox" v-model="surrounding" value="3" name="surrounding">篮球场
-                                <input type="checkbox" v-model="surrounding" value="4" name="surrounding">儿童乐园
+                                <input type="checkbox" v-model="surrounding" value="1"  name="surrounding">Gym
+                                <input type="checkbox" v-model="surrounding" value="2" name="surrounding">Swimming poll
+                                <input type="checkbox" v-model="surrounding" value="3" name="surrounding">Basketball Court
+                                <input type="checkbox" v-model="surrounding" value="4" name="surrounding">Kids playground
                             </div>
                         </div>
                         <div class="textareaDiv">
-                            <span>备注:</span>
+                            <span>Notes:</span>
                             <div class="inputArr">
                                 <p>
-                                    <span>中:</span>
+                                    <span>Ch:</span>
                                     <textarea v-model="housenotes.notes_c" style="height:50px" placeholder="中文备注" name="" id=""></textarea>
                                 </p>
                                 <p>
-                                    <span>英:</span>
-                                    <textarea v-model="housenotes.notes_e" style="height:50px" placeholder="英文备注" name="" id=""></textarea>
+                                    <span>En:</span>
+                                    <textarea v-model="housenotes.notes_e" style="height:50px" placeholder="English Notes" name="" id=""></textarea>
                                 </p>
                             </div>
                         </div>
                         <div class="textareaDiv">
-                            <span>房源介绍:</span>
+                            <span>Introduction:</span>
                             <div class="inputArr">
                                 <p style="height:100px">
-                                    <span>中:</span>
+                                    <span>Ch:</span>
                                     <textarea v-model="houseintroduction.introduction_c" placeholder="请输入中文房源介绍" style="height:100px" name="" id=""></textarea>
                                 </p>
                                 <p style="height:100px">
-                                    <span>英:</span>
-                                    <textarea v-model="houseintroduction.introduction_e" placeholder="请输入英文房源介绍" style="height:100px" name="" id=""></textarea>
+                                    <span>En:</span>
+                                    <textarea v-model="houseintroduction.introduction_e" placeholder="Please enter a listing description in English" style="height:100px" name="" id=""></textarea>
                                 </p>
                             </div>
                         </div>
                         <div class="imgDiv">
-                            <span>图片：</span>
+                            <span>Picture：</span>
                             <UpFile @senddata='getMsgForm' ref="ConFile"></UpFile>
                         </div>
                     </div>
                 </div>
             </div>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="clickbtn()">确 定</el-button>
+                <el-button @click="dialogFormVisible = false">Cancel</el-button>
+                <el-button type="primary" @click="clickbtn()">Submit</el-button>
             </div>
         </el-dialog>
         <el-dialog
-            title="确认删除？"
+            title="confirm deletion?"
             :visible.sync="dialogVisible" width="30%">
-            <span>确定删除此条房源信息么？</span>
+            <span>Are you sure you want to delete this listing information?</span>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="deletehouse()">确 定</el-button>
+                <el-button @click="dialogVisible = false">Cancel</el-button>
+                <el-button type="primary" @click="deletehouse()">Submit</el-button>
             </span>
         </el-dialog>
     </div>
@@ -351,93 +355,93 @@ export default {
             editid:'',
             datalength:'',
             housetypeArr:{
-                1:'公寓',
-                2:'办公室',
-                3:'旺铺',
-                4:'土地'
+                1:'Condo',
+                2:'Office',
+                3:'Commercial Space',
+                4:'land'
             },
             housestatusselect:[
                 {
                     value:'',
-                    label:'不限'
+                    label:'All'
                 },
                 {
                     value:'0',
-                    label:'待发布',
+                    label:'To be released',
                 },
                 {
                     value:'1',
-                    label:'已发布'
+                    label:'Published'
                 },
                 {
                     value:'2',
-                    label:'待处理'
+                    label:'To be processed'
                 }
             ],
             housepriceselect:[
                 {
                     value:'0',
-                    label:'不限'
+                    label:'All'
                 },
                 {
                     value:'1',
-                    label:'30000以下'
+                    label:'30k below'
                 },
                 {
                     value:'2',
-                    label:'30000-50000',
+                    label:'30-50k',
                 },
                 {
                     value:'3',
-                    label:'50000-70000',
+                    label:'50-70k',
                 },
                  {
                     value:'4',
-                    label:'70000-100000',
+                    label:'70-100k',
                 },
                  {
                     value:'5',
-                    label:'100000以上',
+                    label:'100k above',
                 }
             ],
             houseusedselect:[
                 {
                     value:'',
-                    label:'不限'
+                    label:'All'
                 },
                 {
                     value:'1',
-                    label:'公寓'
+                    label:'Condo'
                 },
                 {
                     value:'2',
-                    label:'办公室'
+                    label:'Office'
                 },
                 {
                     value:'3',
-                    label:'旺铺'
+                    label:'Commercial Space'
                 },
                 {
                     value:'4',
-                    label:'土地'
+                    label:'Land'
                 }
             ],
             housetypeselect:[
                 {
                     value:'',
-                    label:'不限'
+                    label:'All'
                 },
                 {
                     value:'1',
-                    label:'房产买卖'
+                    label:'For Sale'
                 },
                 {
                     value:'2',
-                    label:'房产租赁'
+                    label:'For Lease'
                 },
                 {
                     value:'3',
-                    label:'特价房源'
+                    label:'Rush Sale'
                 }
             ],
             layoutArr:{
@@ -448,11 +452,11 @@ export default {
                 5:'house'
             },
             facetoArr:{
-                1:'东',
-                2:'南',
-                3:'西',
-                4:'北',
-                5:'其它'
+                1:'East',
+                2:'South',
+                3:'West',
+                4:'North',
+                5:'Others'
             },
             paymentleaseArr:{
                 1:'2+2+pdc',
@@ -468,15 +472,15 @@ export default {
                 3:'others'
             },
             furnitureArr:{
-                1:'洗衣机',
-                2:'热水器',
-                3:'冰箱',
-                4:'电视机',
-                5:'桌椅',
-                6:'沙发',
-                7:'无',
-                8:'床',
-                9:'空调',
+                1:'Washing Machine',
+                2:'Water Heater',
+                3:'Refrigerator',
+                4:'TV',
+                5:'Table&Chair',
+                6:'Sofa',
+                7:'Bed',
+                8:'Aircon',
+                9:'None',
             },
             searchparams:{
                 title:'',
@@ -591,8 +595,8 @@ export default {
         getcity(){
             this.$get('/others/getcity').then((res)=>{
                 if(res.error == '0000'){
-                    this.citylist = res.data[0]
-                    for(var i=0 ; i <res.data[0].length ;i++){
+                    this.citylist = res.data[1]
+                    for(var i=0 ; i <res.data[1].length ;i++){
                         for(var j=0 ;j <res.data[0][i].children.length;j++){
                             this.citytran[0][res.data[0][i].value + '-' + res.data[0][i].children[j].value] = 
                                 res.data[0][i].label + ' ' + (res.data[0][i].children[j].label == '不限' ? '' : res.data[0][i].children[j].label)
@@ -604,7 +608,7 @@ export default {
                                 res.data[1][m].label + ' ' + (res.data[1][m].children[n].label == 'All' ? '' : res.data[1][m].children[n].label)
                         }
                     }
-                    this.selectcitylist = res.data[0].slice(1)
+                    this.selectcitylist = res.data[1].slice(1)
                 }
             })
         },
@@ -657,11 +661,24 @@ export default {
                 }
             })
         },
+        updatenewhouse(index){
+            this.loadingflag(true);    
+            this.editid = this.tabledata[0][index].id;
+            this.$post('/house/updatehouse',{
+                id:this.editid,
+                isnew:this.tabledata[0][index].isnew
+            }).then((res)=>{
+                this.loadingflag(false);
+                if(res.error == '0000'){
+                    this.gethouselist()
+                }
+            })
+        },
         updatehouse(index,value,type){
             if((!this.tabledata[0][index].title || !this.tabledata[1][index].title 
                 || !this.tabledata[0][index].city || !this.tabledata[1][index].city
                 || !this.tabledata[0][index].notes || !this.tabledata[1][index].notes) && value == 1){
-                    this.$message('请填写完整内容')
+                    this.$message('Please fill in the complete content')
                     return;
                 }
             this.loadingflag(true);    
@@ -729,7 +746,7 @@ export default {
                     this.dialogVisible = false;
                     this.gethouselist();
                     this.$message({
-                        message: '房源删除成功',
+                        message: 'Listing deleted successfully',
                         type: 'success'
                     });
                 }
@@ -747,7 +764,7 @@ export default {
             };
             this.city=this.tabledata[0][index].city;
             this.cityvalue = this.city.split('-')
-            this.used=this.tabledata[0][index].type;
+            this.used=this.tabledata[0][index].used;
             this.housetower=this.tabledata[0][index].tower;
             this.size=this.tabledata[0][index].size;
             this.layout=this.tabledata[0][index].layout;
@@ -777,7 +794,7 @@ export default {
                 || !this.used || !this.housetower || !this.size || !this.layout || !this.balcony || !this.parking
                 || !this.sellingprice || !this.payment || !this.housenotes.notes_c || !this.housenotes.notes_e || !this.formData
                 || !this.faceto || !this.houseintroduction.introduction_c || !this.houseintroduction.introduction_e){
-                    this.$message('请填写完整内容');
+                    this.$message('Please fill in the complete content');
                 return;
             }
             this.loadingflag(true);
@@ -812,7 +829,7 @@ export default {
                     this.gethouselist();
                     this.dialogFormVisible = false;
                     this.$message({
-                        message: '操作成功',
+                        message: 'Successful operation',
                         type: 'success'
                     });
                 }
@@ -921,13 +938,12 @@ export default {
         .dislogcon
             .inputDiv
                 width 100%;
-                height 30px;
                 margin-bottom 5px;
                 line-height 30px;
                 display flex;
                 justify-content flex-start;
                 span
-                    width 80px;
+                    width 100px;
                 input
                     width 400px;
                     border 1px solid #eeeeee;
@@ -944,7 +960,7 @@ export default {
                 align-items center;
                 margin-bottom 5px;
                 span
-                    width 80px;
+                    width 100px;
                 .inputArr
                     width 400px;
                     border 1px solid #eeeeee;
@@ -968,7 +984,7 @@ export default {
                 align-items center;
                 margin-bottom 5px;   
                 span
-                    width 80px;
+                    width 100px;
                 .inputArr
                     width 400px;
                     border 1px solid #eeeeee;
@@ -992,13 +1008,13 @@ export default {
                 align-items center;
                 margin-bottom 5px;   
                 span
-                    width 80px;
+                    width 100px;
                 .imgArr
                     width 400px; 
                     display flex;
                     flex-wrap wrap;
                     &>div
-                        width 80px;
+                        width 100px;
                         height 80px;
                         background red;  
                         margin 5px 10px 5px 0;      
@@ -1009,6 +1025,9 @@ export default {
     button
         display block;
         margin 5px auto !important;
+        padding 0 !important;
+        width 60px;
+        line-height 25px;
 .ForSale
     .el-dialog__footer
         text-align center!important;   

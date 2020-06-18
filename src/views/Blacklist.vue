@@ -1,18 +1,18 @@
 <template>
     <div class="Blacklist">
         <div class="topadd">
-            <span>吐槽小站</span>
-            <el-button type="primary" @click="clickadd()">新增</el-button>
+            <span>Tips</span>
+            <el-button type="primary" @click="clickadd()">Add</el-button>
         </div>
         <table class="contable" v-loading="loading">
             <thead>
                 <tr style="height:30px">
-                    <td width='8%'>序号</td>
-                    <td width='12%'>标题</td>
-                    <td width='25%'>内容</td>
-                    <td width='25%'>图片</td>
-                    <td width='15%'>状态</td>
-                    <td width='15%'>操作</td>
+                    <td width='8%'>Sort</td>
+                    <td width='12%'>Title</td>
+                    <td width='25%'>Content</td>
+                    <td width='25%'>Picture</td>
+                    <td width='15%'>Status</td>
+                    <td width='15%'>Operate</td>
                 </tr>
             </thead>
             <tbody>
@@ -32,21 +32,21 @@
                         </div>
                     </td>
                     <td v-if="tabledata[0][index].status == 0">
-                        <el-button size="mini" type="primary" @click="changestatus(index,1)">发布</el-button>
+                        <el-button size="mini" type="primary" @click="changestatus(index,1)">Open</el-button>
                     </td>
                     <td v-else-if="tabledata[0][index].status == 1">
                         <el-button size="mini" type="success" disabled>已发布</el-button>
-                        <el-button size="mini" type="warning" @click="changestatus(index,0)">关闭</el-button>
+                        <el-button size="mini" type="warning" @click="changestatus(index,0)">Closed</el-button>
                     </td>
                     <td>
-                        <el-button size="mini" type="primary" @click="edit(index)">编辑</el-button>
-                        <el-button size="mini" type="danger" @click="deletebtn(index)">删除</el-button>
+                        <el-button size="mini" type="primary" @click="edit(index)">Edit</el-button>
+                        <el-button size="mini" type="danger" @click="deletebtn(index)">Delete</el-button>
                     </td>
                 </tr>
             </tbody>
         </table>
         <div class="nodata" v-if="!tablelength || tablelength.length ==0">
-            暂无数据
+            No Data
         </div>
         <el-pagination style="margin-top:30px;text-align:right"
             @size-change="handleSizeChange"
@@ -56,22 +56,22 @@
             layout="total,prev, pager, next"
             :total="totalnum">
         </el-pagination>
-        <el-dialog title="编辑" 
+        <el-dialog title="Edit" 
             v-loading="loading"
             :visible.sync="dialogFormVisible">
             <div class="dislogFormcon">
                 <div class="chinese">
                     <div class="title">
-                        中文
+                        Chinese
                     </div>
                     <div class="con">
                         <div class="Q">
-                            <span>标题:</span>
-                            <textarea name="" v-model="black_title_c"></textarea>
+                            <span>Title:</span>
+                            <textarea name="" placeholder="Please enter Chinese Title"  v-model="black_title_c"></textarea>
                         </div>
                         <div class="A">
-                            <span>内容:</span>
-                            <textarea name=""  v-model="black_content_c" id=""></textarea>
+                            <span>Content:</span>
+                            <textarea name="" placeholder="Please enter Chinese content" v-model="black_content_c" id=""></textarea>
                         </div>
                     </div>
                 </div>
@@ -81,33 +81,33 @@
                     </div>
                     <div class="con">
                         <div class="Q">
-                            <span>标题:</span>
-                            <textarea name=""  v-model="balck_title_e" id=""></textarea>
+                            <span>Title:</span>
+                            <textarea name="" placeholder="Please enter English Title" v-model="balck_title_e" id=""></textarea>
                         </div>
                         <div class="A">
-                            <span>内容:</span>
-                            <textarea name="" v-model="black_content_e" id=""></textarea>
+                            <span>Content:</span>
+                            <textarea name="" placeholder="Please enter English content" v-model="black_content_e" id=""></textarea>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="dialogFooter">
-                <span>图片：</span>
+                <span>Picture：</span>
                 <UpFile @senddata='getMsgForm' ref="ConFile"></UpFile>
             </div>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="clickbtn()">确 定</el-button>
+                <el-button @click="dialogFormVisible = false">Cancel</el-button>
+                <el-button type="primary" @click="clickbtn()">Submit</el-button>
             </div>
         </el-dialog>
         <el-dialog
             v-loading="loading"
-            title="确认删除？"
+            title="confirm deletion?"
             :visible.sync="dialogVisible" width="30%">
-            <span>确定删除此条内容么？</span>
+            <span>Are you sure you want to delete this content?</span>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="clicksure()">确 定</el-button>
+                <el-button @click="dialogVisible = false">Cancel</el-button>
+                <el-button type="primary" @click="clicksure()">Submit</el-button>
             </span>
         </el-dialog>
     </div>
@@ -249,7 +249,7 @@ export default {
     margin 0 auto;
     display flex;
     span 
-        width 50px;
+        width 80px;
     .imgArr
         flex 1;
         height 80px;   

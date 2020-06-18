@@ -1,16 +1,16 @@
 <template>
     <div class="QA">
         <div class="topadd">
-            <span>常见问题</span>
-            <el-button type="primary" @click="clickadd()">添加问题</el-button>
+            <span>Q & A</span>
+            <el-button type="primary" @click="clickadd()">Add</el-button>
         </div>
         <table class="contable" v-loading="loading">
             <thead>
                 <tr style="height:30px">
-                    <td width='10%'>序号</td>
-                    <td width='25%'>问题</td>
-                    <td width='35%'>答案</td>
-                    <td width='15%'>操作</td>
+                    <td width='10%'>Sort</td>
+                    <td width='25%'>Questent</td>
+                    <td width='35%'>Answer</td>
+                    <td width='15%'>Operate</td>
                 </tr>
             </thead>
             <tbody>
@@ -25,14 +25,14 @@
                         <p>{{tabledata[1][index].answer}}</p>
                     </td>
                     <td>
-                        <el-button size="mini" type="primary" @click="edit(index)">编辑</el-button>
-                        <el-button size="mini" type="danger" @click="deletebtn(index)">删除</el-button>
+                        <el-button size="mini" type="primary" @click="edit(index)">Edit</el-button>
+                        <el-button size="mini" type="danger" @click="deletebtn(index)">Delete</el-button>
                     </td>
                 </tr>
             </tbody>
         </table>
         <div class="nodata" v-if="!tablelength || tablelength.length ==0">
-            暂无数据
+            No Data
         </div>
         <el-pagination style="margin-top:30px;text-align:right"
             @size-change="handleSizeChange"
@@ -42,22 +42,22 @@
             layout="total,prev, pager, next"
             :total="totalnum">
         </el-pagination>
-        <el-dialog title="修改问题" 
+        <el-dialog title="Modify the question" 
             v-loading="loading"
             :visible.sync="dialogFormVisible">
             <div class="dislogFormcon">
                 <div class="chinese">
                     <div class="title">
-                        中文
+                        Chinese
                     </div>
                     <div class="con">
                         <div class="Q">
                             <span>Q:</span>
-                            <textarea name="" v-model="questent_c"></textarea>
+                            <textarea name="" placeholder="Please enter Chinese title" v-model="questent_c"></textarea>
                         </div>
                         <div class="A">
                             <span>A:</span>
-                            <textarea name=""  v-model="answer_c" id=""></textarea>
+                            <textarea name="" placeholder="Please enter Chinese content"  v-model="answer_c" id=""></textarea>
                         </div>
                     </div>
                 </div>
@@ -68,28 +68,28 @@
                     <div class="con">
                         <div class="Q">
                             <span>Q:</span>
-                            <textarea name=""  v-model="questent_e" id=""></textarea>
+                            <textarea name=""  placeholder="Please enter English title" v-model="questent_e" id=""></textarea>
                         </div>
                         <div class="A">
                             <span>A:</span>
-                            <textarea name="" v-model="answer_e" id=""></textarea>
+                            <textarea name="" placeholder="Please enter English content" v-model="answer_e" id=""></textarea>
                         </div>
                     </div>
                 </div>
             </div>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="clickbtn()">确 定</el-button>
+                <el-button @click="dialogFormVisible = false">Cancel</el-button>
+                <el-button type="primary" @click="clickbtn()">Submit</el-button>
             </div>
         </el-dialog>
         <el-dialog
             v-loading="loading"
-            title="确认删除？"
+            title="confirm deletion?"
             :visible.sync="dialogVisible" width="30%">
-            <span>确定删除此条问题么？</span>
+            <span>Are you sure you want to delete this question?</span>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="clicksure()">确 定</el-button>
+                <el-button @click="dialogVisible = false">Cancel</el-button>
+                <el-button type="primary" @click="clicksure()">Submit</el-button>
             </span>
         </el-dialog>
     </div>

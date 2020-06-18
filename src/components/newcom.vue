@@ -2,15 +2,15 @@
     <div class="newcon">
         <div class="topadd">
             <span>{{title}}</span>
-            <el-button type="primary" @click="clickadd()">新增</el-button>
+            <el-button type="primary" @click="clickadd()">Add</el-button>
         </div>
         <div class="listcon">
             <table class="contable" v-loading="loading">
                 <thead>
                     <tr style="height:30px">
-                        <td width='10%'>序号</td>
-                        <td width='60%'>标题</td>
-                        <td width='30%'>操作</td>
+                        <td width='10%'>Sort</td>
+                        <td width='60%'>Title</td>
+                        <td width='30%'>Operate</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -21,17 +21,16 @@
                             <p>{{listdata[1][index].title}}</p>
                         </td>
                         <td>
-                            <el-button size="mini" type="primary" @click="godetail(index)">查看</el-button>
-                            <el-button size="mini" type="danger" @click="deletesure(list)">删除</el-button>
-                            <el-button size="mini" type="primary" v-if="list.status == 0" @click="uodatestatus(list,1)">发布</el-button>
-                            <el-button size="mini" type="warning" v-else @click="uodatestatus(list,0)">关闭</el-button>
+                            <el-button size="mini" type="primary" @click="godetail(index)">View</el-button>
+                            <el-button size="mini" type="danger" @click="deletesure(list)">Detele</el-button>
+                            <el-button size="mini" type="primary" v-if="list.status == 0" @click="uodatestatus(list,1)">Open</el-button>
+                            <el-button size="mini" type="warning" v-else @click="uodatestatus(list,0)">Closed</el-button>
                         </td>
                     </tr>
                 </tbody>
             </table>
-           
             <div class="nodata" v-if="!listdata[0] || listdata[0].length ==0">
-                暂无数据
+                No Data
             </div>
             <el-pagination style="margin-top:30px;text-align:right"
                 @size-change="handleSizeChange"
@@ -47,14 +46,14 @@
             width="90%"
             :visible="dialogVisible">
             <div class="addbtn"> 
-                <el-button size="mini" type="primary" @click="addcon(2)">添加图片</el-button>
-                <el-button size="mini" type="primary" @click="addcon(1)">添加内容</el-button>
+                <el-button size="mini" type="primary" @click="addcon(2)">Add Picture</el-button>
+                <el-button size="mini" type="primary" @click="addcon(1)">Add Content</el-button>
             </div>
             <div class="diacontent">
                 <div class="title">
-                    <span>标题 :</span>
-                    <el-input class="titlecon" v-model="titlecon.title_c" placeholder="请输入内容"></el-input>
-                    <el-input class="titlecon" v-model="titlecon.title_e" placeholder="请输入内容"></el-input>
+                    <span>Title :</span>
+                    <el-input class="titlecon" v-model="titlecon.title_c" placeholder="Please enter content"></el-input>
+                    <el-input class="titlecon" v-model="titlecon.title_e" placeholder="Please enter content"></el-input>
                 </div>
                 <div v-for="(list,index) in content" :key="index">
                     <div class="list imglist" v-if="list.type == 2">
@@ -62,21 +61,21 @@
                         <div class="addimgbtn">
                             <img src="../assets/tianjia.png" alt="" srcset="">
                             <br>
-                            <span>选择图片</span>
+                            <span>Upload picture</span>
                         </div>
                         <div class="imgArr" >
                             <img :src="list.img" alt="" srcset="">
                         </div>
                     </div>
                     <div class="list textlist" v-else>   
-                        <el-input class="conlist" type="textarea" :rows="2" placeholder="请输入中文内容" v-model="list.con_c"></el-input>
-                        <el-input class="conlist" type="textarea" :rows="2" placeholder="请输入英文内容" v-model="list.con_e"></el-input>    
+                        <el-input class="conlist" type="textarea" :rows="2" placeholder="Please enter Chinese content" v-model="list.con_c"></el-input>
+                        <el-input class="conlist" type="textarea" :rows="2" placeholder="Please enter English content" v-model="list.con_e"></el-input>    
                     </div>
                 </div>
             </div>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="clicksure()">确 定</el-button>
+                <el-button @click="dialogVisible = false">Cancel</el-button>
+                <el-button type="primary" @click="clicksure()">Submit</el-button>
             </span>
         </el-dialog>
         <el-dialog
@@ -94,7 +93,7 @@
 <script>
 import newdetail from './newdetail'
 export default {
-    props:['title'],
+    props:['title','newtype'],
     data(){
         return{
             formData:new FormData(),
@@ -125,7 +124,11 @@ export default {
     },
     methods:{
         getlist(){
-            this.$post('/advisory/list',this.formData).then((res)=>{
+            this.$post('/advisory/list',{
+                params:JSON.stringify({
+                    type:this.newtype
+                }),
+            }).then((res)=>{
                 this.loadingflag(false)
                 if(res.error == '0000'){
                     this.listdata = res.data
@@ -135,6 +138,10 @@ export default {
         },
         closedetail(){
             this.showdetail = false;
+            this.detaillist = {
+                ch:'',
+                en:''
+            }
         },
         clickadd(){
             this.dialogVisible = true
@@ -189,6 +196,7 @@ export default {
         clicksure(){
             this.formData.append('title',JSON.stringify(this.titlecon))
             this.formData.append('content',JSON.stringify(this.content))
+            this.formData.append('type',this.newtype)
             this.loadingflag(true)
             this.$post('/advisory/addadvisory',this.formData).then((res)=>{
                 if(res.error == '0000'){
@@ -291,7 +299,7 @@ export default {
                 top 0;
             }
             .addimgbtn{
-                width 100px;
+                width 120px;
                 height 100px;
                 text-align center;
                 border-right 1px solid #C0C4CC;

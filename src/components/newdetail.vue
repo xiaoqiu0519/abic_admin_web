@@ -24,7 +24,6 @@ export default {
   mounted(){
     this.datalist.push(JSON.parse(this.detaillist.ch))
     this.datalist.push(JSON.parse(this.detaillist.en))
-    console.log(this.datalist)
   },
   methods:{
     closeimg(){

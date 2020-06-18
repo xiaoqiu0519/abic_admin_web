@@ -2,7 +2,7 @@
     <div class="imglist">
         <div class="title">
             <input type="file"  name="file" ref="file" multiple @change="changeFile" accept=".jpg, .jpeg, .png"/>
-            <span>选择图片(最多选择8张)</span>
+            <span>Upload up to 8 photos</span>
         </div>
         <div class="imgArr">
             <img v-for="(item,index) in upImgArr" :key="index" :src="item" alt="" srcset="">
