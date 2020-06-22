@@ -4,8 +4,8 @@
            <img src="../assets/message1.png" alt="" srcset=""><span style="font-size:20px;margin-left:6px">{{messagenum}} New Message</span> 
         </div>  
         <div class="topadd">
-            <span>Realty Manage</span>
-            <el-button type="primary" @click="clickadd()">Add Realty</el-button>
+            <span>Listing Management</span>
+            <el-button type="primary" @click="clickadd()">Add</el-button>
         </div>
         <div class="search">
             <div class="searchlist">
@@ -28,7 +28,7 @@
                 </el-select>
             </div>
             <div class='searchlist'>
-                <span>Used : </span>
+                <span>Category : </span>
                 <el-select class="inputsearch" v-model="searchparams.used" placeholder="Please choose">
                     <el-option
                     v-for="item in houseusedselect"
@@ -67,11 +67,11 @@
         <table class="ForSaletable">
             <thead>
                 <tr style="height:30px">
-                    <td>Sort</td>
+                    <td>No</td>
                     <td width='10%'>Name</td>
                     <td width='10%'>City</td>
-                    <td>Used</td>
-                    <td width='5%'>Contact No.</td>
+                    <td>Category</td>
+                    <td width='5%'>Floor</td>
                     <td>Face to</td>
                     <td>Size</td>
                     <td>Balcony</td>
@@ -127,15 +127,15 @@
                         <el-button size="mini" @click="updatehouse(index,2,'type')" :type="tabledata[0][index].type == 2 ? 'primary' : 'info'">For Lease</el-button>
                         <el-button size="mini" @click="updatehouse(index,3,'type')" :type="tabledata[0][index].type == 3 ? 'primary' : 'info'">Rush Sale</el-button>
                     </td>
-                    <td class="flex" v-if="tabledata[0][index].status == 0">
-                        <el-button size="mini" type="primary" @click="updatehouse(index,1,'status')">Release</el-button>
-                        <el-button size="mini" type="primary" @click="updatehouse(index,2,'status')">Later</el-button>
+                    <td class="flex" v-if="tabledata[0][index].status == 0"> <!--新房源、待发布-->
+                        <el-button size="mini" type="primary" @click="updatehouse(index,1,'status')">Upload</el-button>
+                        <el-button size="mini" type="primary" @click="updatehouse(index,2,'status')">Pending</el-button>
                     </td>
-                    <td class="flex" v-else-if="tabledata[0][index].status == 1">
-                        <el-button size="mini" type="success" disabled>Published</el-button>
-                        <el-button size="mini" type="warning" @click="updatehouse(index,0,'status')">Closed</el-button>
+                    <td class="flex" v-else-if="tabledata[0][index].status == 1"><!--新房源、待发布-->
+                        <el-button size="mini" type="success" disabled>Uploaded</el-button>
+                        <el-button size="mini" type="warning" @click="updatehouse(index,0,'status')">Close</el-button>
                     </td>
-                    <td class="flex" v-else-if="tabledata[0][index].status == 2">
+                    <td class="flex" v-else-if="tabledata[0][index].status == 2"><!--重新打开房源-->
                         <el-button size="mini" type="warning" @click="updatehouse(index,0,'status')">Open</el-button>
                     </td>
                     <td>
@@ -159,26 +159,26 @@
             layout="total,prev, pager, next"
             :total="totalnum">
         </el-pagination>
-        <el-dialog title="Edit Realty" 
+        <el-dialog title="Edit Listing" 
             width="90%"
             :visible="dialogFormVisible">
             <div class="dislogFormcon">
                 <div class="chinese">
                     <div class="dislogcon">
                         <div class="inputDiv">
-                            <span>User Name:</span>
+                            <span>Client Name:</span>
                             <input type="text" v-model="username">
                         </div>
                         <div class="inputDiv">
-                            <span>User Number:</span>
+                            <span>Client Number:</span>
                             <input type="text" v-model="telphone">
                         </div>
                         <div class="inputDiv">
-                            <span>User Email:</span>
+                            <span>Client Email:</span>
                             <input type="text" v-model="email">
                         </div>
                         <div class="cominput">
-                            <span>Name:</span>
+                            <span>Title:</span>
                             <div class="inputArr">
                                 <p>
                                     <span>Ch:</span>
@@ -199,7 +199,7 @@
                             </el-cascader>
                         </div>
                         <div class="inputDiv">
-                            <span>Used:</span>
+                            <span>Category:</span>
                             <div class="radioDiv">
                                 <input type="radio" v-model="used" value="1" :checked='used == 1' name="used"> Condo
                                 <input type="radio" v-model="used" value="2" :checked='used == 2' name="used"> Office
@@ -283,12 +283,12 @@
                             </div>
                         </div>
                         <div class="inputDiv">
-                            <span>Surrounding:</span>
+                            <span>Amenity:</span>
                             <div class="radioDiv">
                                 <input type="checkbox" v-model="surrounding" value="1"  name="surrounding">Gym
-                                <input type="checkbox" v-model="surrounding" value="2" name="surrounding">Swimming poll
+                                <input type="checkbox" v-model="surrounding" value="2" name="surrounding">Swimming Poll
                                 <input type="checkbox" v-model="surrounding" value="3" name="surrounding">Basketball Court
-                                <input type="checkbox" v-model="surrounding" value="4" name="surrounding">Kids playground
+                                <input type="checkbox" v-model="surrounding" value="4" name="surrounding">Kids Playground
                             </div>
                         </div>
                         <div class="textareaDiv">
@@ -367,15 +367,15 @@ export default {
                 },
                 {
                     value:'0',
-                    label:'To be released',
+                    label:'Pending listing',
                 },
                 {
                     value:'1',
-                    label:'Published'
+                    label:'Uploaded listing'
                 },
                 {
                     value:'2',
-                    label:'To be processed'
+                    label:'Close listing'
                 }
             ],
             housepriceselect:[

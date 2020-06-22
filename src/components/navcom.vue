@@ -14,7 +14,7 @@
                             <span>Realty</span>
                         </template>
                         <el-menu-item-group>
-                            <el-menu-item index="1-1">Realty</el-menu-item>                         
+                            <el-menu-item index="1-1">Listing</el-menu-item>                         
                         </el-menu-item-group>
                     </el-submenu>
                     <el-submenu index="3">
@@ -51,12 +51,12 @@ export default {
 
     },
     methods: {
-      handleOpen(key, keyPath) {
-        console.log(key, keyPath,this.defaultactiveindex);
+      handleOpen() {
+        // console.log(key, keyPath,this.defaultactiveindex);
 
       },
-      handleClose(key, keyPath) {
-        console.log(key, keyPath);
+      handleClose() {
+        // console.log(key, keyPath);
       }
     }
 }

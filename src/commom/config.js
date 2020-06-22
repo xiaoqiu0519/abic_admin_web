@@ -1,5 +1,6 @@
 import axios from 'axios'
 import store from '../store'
+import router from '../router'
 const service = axios.create({
     baseURL: '/api', // api的base_url
     timeout: 60000 // 请求超时时间
@@ -18,6 +19,9 @@ service.interceptors.request.use(config => {
 // respone拦截器
 service.interceptors.response.use(
     response => {
+        if(response.data.error === '999999'){
+            router.push('/login')
+        }
         return response.data
     },
     error => {
