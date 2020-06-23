@@ -92,11 +92,19 @@ export default {
                   span
                     width 80px;    
               .A
-                  height 100px;        
+                  height 100px;  
+  .el-dialog__wrapper
+    display flex;
+    justify-content center;
+    align-items center;
   .el-dialog__body
       padding 10px !important;
   .el-dialog__header
       border-bottom 1px solid #eeeeee; 
+      padding 45px 20px 10px;
+  .el-dialog
+    margin 0 auto 
+    margin-top 0 !important;   
   .shadebox
     width 100%;
     height 100%;

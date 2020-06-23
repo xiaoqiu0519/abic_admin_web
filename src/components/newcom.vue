@@ -326,13 +326,17 @@ export default {
 .newcon{
     .dddd{
         .el-dialog__body{
-            height: 400px;
+            height: 600px;
         } 
         .el-dialog{
             margin-top 5vh !important 
         }
     }
-    
+    .textlist{
+        .el-textarea__inner{
+            height 100px;
+        }
+    }
 }
    
 </style>
