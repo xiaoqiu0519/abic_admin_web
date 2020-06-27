@@ -129,14 +129,13 @@
                     </td>
                     <td class="flex" v-if="tabledata[0][index].status == 0"> <!--新房源、待发布-->
                         <el-button size="mini" type="primary" @click="updatehouse(index,1,'status')">Upload</el-button>
-                        <el-button size="mini" type="primary" @click="updatehouse(index,2,'status')">Pending</el-button>
+                        <el-button size="mini" type="primary" @click="updatehouse(index,0,'status')">Pending</el-button>
                     </td>
                     <td class="flex" v-else-if="tabledata[0][index].status == 1"><!--新房源、待发布-->
-                        <el-button size="mini" type="success" disabled>Uploaded</el-button>
-                        <el-button size="mini" type="warning" @click="updatehouse(index,0,'status')">Close</el-button>
+                        <el-button size="mini" type="warning" @click="updatehouse(index,2,'status')">Close</el-button>
                     </td>
                     <td class="flex" v-else-if="tabledata[0][index].status == 2"><!--重新打开房源-->
-                        <el-button size="mini" type="warning" @click="updatehouse(index,0,'status')">Open</el-button>
+                        <el-button size="mini" type="warning" @click="updatehouse(index,1,'status')">Open</el-button>
                     </td>
                     <td>
                         <el-switch @change="updatenewhouse(index)" v-model="tabledata[0][index].isnew" active-color="#409EFF" inactive-color="#909399" active-value="1" inactive-value="0"></el-switch>
