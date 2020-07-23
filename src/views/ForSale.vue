@@ -200,10 +200,11 @@
                         <div class="inputDiv">
                             <span>Category:</span>
                             <div class="radioDiv">
-                                <input type="radio" v-model="used" value="1" :checked='used == 1' name="used"> Condo
+                                <input type="radio" v-model="used" value="1" :checked='used == 1' name="used"> Residential
                                 <input type="radio" v-model="used" value="2" :checked='used == 2' name="used"> Office
                                 <input type="radio" v-model="used" value="3" :checked='used == 3' name="used"> Commercial Space
-                                <input type="radio" v-model="used" value="4" :checked='used == 4' name="used"> land
+                                <input type="radio" v-model="used" value="4" :checked='used == 4' name="used"> Land
+                                <input type="radio" v-model="used" value="5" :checked='used == 5' name="used"> Warehouse
                             </div>
                         </div>
                         <div class="inputDiv">
@@ -213,11 +214,12 @@
                         <div class="inputDiv">
                             <span>Layout:</span>
                             <div class="radioDiv">
-                                <input type="radio" v-model="layout" value="1"  :checked='layout == 1' name="layout"> studio
-                                <input type="radio" v-model="layout" value="2"  :checked='layout == 2' name="layout"> 1BR
-                                <input type="radio" v-model="layout" value="3"  :checked='layout == 3' name="layout"> 2BR
-                                <input type="radio" v-model="layout" value="4"  :checked='layout == 4' name="layout"> 3BR
-                                <input type="radio" v-model="layout" value="5"  :checked='layout == 5' name="layout"> others
+                                <input type="radio" v-model="layout" :disabled='used != 1' value="1"  :checked='layout == 1' name="layout"> studio
+                                <input type="radio" v-model="layout" :disabled='used != 1' value="2"  :checked='layout == 2' name="layout"> 1BR
+                                <input type="radio" v-model="layout" :disabled='used != 1' value="3"  :checked='layout == 3' name="layout"> 2BR
+                                <input type="radio" v-model="layout" :disabled='used != 1' value="4"  :checked='layout == 4' name="layout"> 3BR
+                                <input type="radio" v-model="layout" :disabled='used != 1' value="4"  :checked='layout == 5' name="layout"> House
+                                <input type="radio" v-model="layout" :disabled='used != 1' value="5"  :checked='layout == 6' name="layout"> Others
                             </div>
                         </div>
                         <div class="inputDiv">
@@ -278,16 +280,17 @@
                                 <input type="checkbox" v-model="furniture" value="6" name="furniture">Sofa                              
                                 <input type="checkbox" v-model="furniture" value="7" name="furniture">Bed
                                 <input type="checkbox" v-model="furniture" value="8" name="furniture">Aircon
-                                <input type="checkbox" v-model="furniture" value="9" name="furniture">None
+                                <input type="checkbox" v-model="furniture" value="9" name="furniture">N/A
                             </div>
                         </div>
                         <div class="inputDiv">
                             <span>Amenity:</span>
                             <div class="radioDiv">
                                 <input type="checkbox" v-model="surrounding" value="1"  name="surrounding">Gym
-                                <input type="checkbox" v-model="surrounding" value="2" name="surrounding">Swimming Poll
+                                <input type="checkbox" v-model="surrounding" value="2" name="surrounding">Swimming Pool
                                 <input type="checkbox" v-model="surrounding" value="3" name="surrounding">Basketball Court
                                 <input type="checkbox" v-model="surrounding" value="4" name="surrounding">Kids Playground
+                                <input type="checkbox" v-model="surrounding" value="5" name="surrounding">N/A
                             </div>
                         </div>
                         <div class="textareaDiv">
@@ -354,10 +357,11 @@ export default {
             editid:'',
             datalength:'',
             housetypeArr:{
-                1:'Condo',
+                1:'Residential',
                 2:'Office',
                 3:'Commercial Space',
-                4:'land'
+                4:'land',
+                5:'Warehouse'
             },
             housestatusselect:[
                 {
@@ -410,7 +414,7 @@ export default {
                 },
                 {
                     value:'1',
-                    label:'Condo'
+                    label:'Residential'
                 },
                 {
                     value:'2',
@@ -423,6 +427,10 @@ export default {
                 {
                     value:'4',
                     label:'Land'
+                },
+                {
+                    value:'5',
+                    label:'Warehouse'
                 }
             ],
             housetypeselect:[
@@ -479,7 +487,7 @@ export default {
                 6:'Sofa',
                 7:'Bed',
                 8:'Aircon',
-                9:'None',
+                9:'N/A',
             },
             searchparams:{
                 title:'',
@@ -537,7 +545,6 @@ export default {
         this.loadingflag(true)
         this.gethouselist();
         this.getcity();
-
         this.getnewmessage(2)
         this.timer = setInterval(()=>{
             this.getnewmessage(2)
@@ -563,8 +570,7 @@ export default {
                         this.datalength = res.data[0].length;
                         this.tabledata = res.data;
                         this.totalnum = res.total;
-                    }
-                   
+                    }                 
                 }
             })
         },
@@ -790,7 +796,7 @@ export default {
         },
         addhouse(){
             if(!this.housename.name_c || !this.housename.name_e || !this.city || !this.cityvalue
-                || !this.used || !this.housetower || !this.size || !this.layout || !this.balcony || !this.parking
+                || !this.used || !this.housetower || !this.size || (!this.layout && this.used ==1 ) || !this.balcony || !this.parking
                 || !this.sellingprice || !this.payment || !this.housenotes.notes_c || !this.housenotes.notes_e || !this.formData
                 || !this.faceto || !this.houseintroduction.introduction_c || !this.houseintroduction.introduction_e){
                     this.$message('Please fill in the complete content');
