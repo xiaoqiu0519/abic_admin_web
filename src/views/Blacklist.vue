@@ -206,12 +206,17 @@ export default {
             })
         },
         clickbtn(){
-            this.loading = true;
+            
+            if(!this.formData || !this.formData.get('images')){
+               this.$message('请填写完整内容')
+                return;
+            }
             this.formData.append('id',this.editid);
             this.formData.append('title_c',this.black_title_c);
             this.formData.append('content_c',this.black_content_c);
             this.formData.append('title_e',this.balck_title_e);
             this.formData.append('content_e',this.black_content_e);
+            this.loading = true;
             this.$post('/black/updatecon',this.formData).then((res)=>{
                 this.loading = false
                 if(res.error == '0000'){
