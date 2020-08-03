@@ -12,6 +12,7 @@
                     <td width='25%'>Content</td>
                     <td width='25%'>Picture</td>
                     <td width='15%'>Status</td>
+                    <td width='15%'>top</td>
                     <td width='15%'>Operate</td>
                 </tr>
             </thead>
@@ -37,6 +38,9 @@
                     <td v-else-if="tabledata[0][index].status == 1">
                         <el-button size="mini" type="success" disabled>已发布</el-button>
                         <el-button size="mini" type="warning" @click="changestatus(index,0)">Closed</el-button>
+                    </td>
+                    <td>
+                        <el-switch @change="changetop(index)" v-model="tabledata[0][index].top" active-color="#409EFF" inactive-color="#909399" active-value="1" inactive-value="0"></el-switch>
                     </td>
                     <td>
                         <el-button size="mini" type="primary" @click="edit(index)">Edit</el-button>
@@ -163,6 +167,17 @@ export default {
                 }
             })
         },
+        changetop(index){
+            this.loading = true;
+            this.$post('/black/udatetop',{
+                id:this.tabledata[0][index].id,
+                top:this.tabledata[0][index].top
+            }).then((res)=>{
+                if(res.error == '0000'){
+                    this.getlist()
+                }
+            })
+        },
         changestatus(index,state){
             if(!this.tabledata[0][index].title || !this.tabledata[0][index].content || !this.tabledata[1][index].title || !this.tabledata[1][index].content){
                 this.$message('请填写完整内容')
@@ -206,9 +221,8 @@ export default {
             })
         },
         clickbtn(){
-            
-            if(!this.formData || !this.formData.get('images')){
-               this.$message('请填写完整内容')
+            if(!this.formData){
+                this.$message('请填写完整内容')
                 return;
             }
             this.formData.append('id',this.editid);
